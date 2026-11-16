@@ -5,14 +5,20 @@ from fastapi import (
     Depends,
     HTTPException,
     Path,
+    Query,
     status,
 )
 
 from app.core.database import session_factory
-from app.core.dependencies import CurrentActiveUserDep
+from app.core.dependencies import (
+    CurrentActiveUserDep,
+    require_role,
+)
 from app.modules.pedidos.schemas import (
+    CambioEstado,
     PedidoCreate,
     PedidoRead,
+    PedidosPaginados,
 )
 from app.modules.pedidos.service import (
     PedidoNoEncontrado,
@@ -22,6 +28,7 @@ from app.modules.pedidos.service import (
     StockInsuficiente,
 )
 from app.modules.pedidos.unit_of_work import PedidoUnitOfWork
+from app.modules.usuarios.models import Usuario
 
 router = APIRouter(
     prefix="/pedidos",
@@ -30,9 +37,7 @@ router = APIRouter(
 
 
 def get_pedido_service() -> PedidoService:
-    uow = PedidoUnitOfWork(
-        session_factory
-    )
+    uow = PedidoUnitOfWork(session_factory)
 
     return PedidoService(uow)
 
@@ -41,6 +46,60 @@ PedidoServiceDep = Annotated[
     PedidoService,
     Depends(get_pedido_service),
 ]
+
+AdminUserDep = Annotated[
+    Usuario,
+    Depends(require_role("admin")),
+]
+
+
+@router.get(
+    "/admin/todos",
+    response_model=PedidosPaginados,
+)
+def listar_pedidos_admin(
+    service: PedidoServiceDep,
+    admin: AdminUserDep,
+    skip: int = Query(
+        default=0,
+        ge=0,
+    ),
+    limit: int = Query(
+        default=20,
+        ge=1,
+        le=100,
+    ),
+) -> PedidosPaginados:
+    return service.listar_admin(
+        skip=skip,
+        limit=limit,
+    )
+
+
+@router.patch(
+    "/admin/{pedido_id}/estado",
+    response_model=PedidoRead,
+)
+def cambiar_estado_pedido(
+    data: CambioEstado,
+    service: PedidoServiceDep,
+    admin: AdminUserDep,
+    pedido_id: int = Path(
+        ...,
+        gt=0,
+    ),
+) -> PedidoRead:
+    try:
+        return service.cambiar_estado(
+            pedido_id=pedido_id,
+            data=data,
+        )
+
+    except PedidoNoEncontrado as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
 
 @router.get(
     "/mios",
@@ -78,6 +137,7 @@ def obtener_pedido(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(error),
         ) from error
+
 
 @router.post(
     "",

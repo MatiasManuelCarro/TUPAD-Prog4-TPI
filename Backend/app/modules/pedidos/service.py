@@ -5,8 +5,10 @@ from app.modules.pedidos.models import (
     Pedido,
 )
 from app.modules.pedidos.schemas import (
+    CambioEstado,
     PedidoCreate,
     PedidoRead,
+    PedidosPaginados,
 )
 from app.modules.pedidos.unit_of_work import PedidoUnitOfWork
 
@@ -26,6 +28,7 @@ class StockInsuficiente(Exception):
 class PedidoNoEncontrado(Exception):
     pass
 
+
 class PedidoService:
     def __init__(
         self,
@@ -38,14 +41,25 @@ class PedidoService:
         usuario_id: int,
     ) -> list[PedidoRead]:
         with self.uow as uow:
-            pedidos = uow.pedidos.get_by_usuario(
-                usuario_id
+            pedidos = uow.pedidos.get_by_usuario(usuario_id)
+
+            return [PedidoRead.model_validate(pedido) for pedido in pedidos]
+
+    def listar_admin(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+    ) -> PedidosPaginados:
+        with self.uow as uow:
+            total, pedidos = uow.pedidos.search(
+                skip=skip,
+                limit=limit,
             )
 
-            return [
-                PedidoRead.model_validate(pedido)
-                for pedido in pedidos
-            ]
+        return PedidosPaginados(
+            total=total,
+            items=[PedidoRead.model_validate(pedido) for pedido in pedidos],
+        )
 
     def obtener_por_id(
         self,
@@ -53,21 +67,30 @@ class PedidoService:
         usuario_id: int,
     ) -> PedidoRead:
         with self.uow as uow:
-            pedido = uow.pedidos.get_by_id_with_items(
-                pedido_id
-            )
+            pedido = uow.pedidos.get_by_id_with_items(pedido_id)
 
-            if (
-                pedido is None
-                or pedido.usuario_id != usuario_id
-            ):
-                raise PedidoNoEncontrado(
-                    f"Pedido {pedido_id} no encontrado"
-                )
+            if pedido is None or pedido.usuario_id != usuario_id:
+                raise PedidoNoEncontrado(f"Pedido {pedido_id} no encontrado")
 
-            return PedidoRead.model_validate(
-                pedido
-            )
+            return PedidoRead.model_validate(pedido)
+
+    def cambiar_estado(
+        self,
+        pedido_id: int,
+        data: CambioEstado,
+    ) -> PedidoRead:
+        with self.uow as uow:
+            pedido = uow.pedidos.get_by_id_with_items(pedido_id)
+
+        if pedido is None:
+            raise PedidoNoEncontrado(f"Pedido {pedido_id} no encontrado")
+
+        pedido.estado = data.estado
+        pedido.updated_at = datetime.now(UTC)
+
+        uow.pedidos.add(pedido)
+
+        return PedidoRead.model_validate(pedido)
 
     def crear(
         self,
@@ -84,17 +107,13 @@ class PedidoService:
                 total=0,
             )
 
-            pedido = uow.pedidos.add(
-                pedido
-            )
+            pedido = uow.pedidos.add(pedido)
 
             total = 0.0
             detalles = []
 
             for item in data.items:
-                producto = uow.productos.get_activo_by_id(
-                    item.producto_id
-                )
+                producto = uow.productos.get_activo_by_id(item.producto_id)
 
                 if producto is None:
                     raise ProductoNoEncontrado(
@@ -111,10 +130,7 @@ class PedidoService:
                         f"Stock insuficiente para {producto.nombre}"
                     )
 
-                subtotal = (
-                    producto.precio_base
-                    * item.cantidad
-                )
+                subtotal = producto.precio_base * item.cantidad
 
                 detalle = DetallePedido(
                     pedido_id=pedido.id,
@@ -132,9 +148,7 @@ class PedidoService:
                 if producto.stock == 0:
                     producto.disponible = False
 
-                uow.productos.add(
-                    producto
-                )
+                uow.productos.add(producto)
 
                 detalles.append(detalle)
                 total += subtotal
@@ -144,10 +158,6 @@ class PedidoService:
 
             pedido.items = detalles
 
-            uow.pedidos.add(
-                pedido
-            )
+            uow.pedidos.add(pedido)
 
-            return PedidoRead.model_validate(
-                pedido
-            )
+            return PedidoRead.model_validate(pedido)

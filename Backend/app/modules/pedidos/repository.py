@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
@@ -44,3 +45,29 @@ class PedidoRepository(BaseRepository[Pedido]):
                 selectinload(Pedido.items)
             )
         ).first()
+
+    def search(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+    ) -> tuple[int, list[Pedido]]:
+        total = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+        ).one()
+
+        pedidos = list(
+            self.session.exec(
+                select(Pedido)
+                .options(
+                    selectinload(Pedido.items)
+                )
+                .order_by(
+                    Pedido.created_at.desc()
+                )
+                .offset(skip)
+                .limit(limit)
+            ).all()
+        )
+
+        return total, pedidos
