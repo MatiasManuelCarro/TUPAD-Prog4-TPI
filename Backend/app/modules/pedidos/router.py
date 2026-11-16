@@ -19,6 +19,7 @@ from app.modules.pedidos.schemas import (
     PedidoCreate,
     PedidoRead,
     PedidosPaginados,
+    ResumenPedidos,
 )
 from app.modules.pedidos.service import (
     PedidoNoEncontrado,
@@ -113,6 +114,15 @@ def listar_mis_pedidos(
         usuario_id=current_user.id,
     )
 
+@router.get(
+    "/admin/resumen",
+    response_model=ResumenPedidos,
+)
+def obtener_resumen_pedidos(
+    service: PedidoServiceDep,
+    admin: AdminUserDep,
+) -> ResumenPedidos:
+    return service.obtener_resumen()
 
 @router.get(
     "/{pedido_id}",

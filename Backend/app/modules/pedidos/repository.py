@@ -71,3 +71,68 @@ class PedidoRepository(BaseRepository[Pedido]):
         )
 
         return total, pedidos
+
+    def get_resumen(
+        self,
+    ) -> tuple[int, int, int, int, int, float]:
+        pendientes = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+            .where(
+                Pedido.estado == "PENDIENTE"
+            )
+        ).one()
+
+        en_preparacion = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+            .where(
+                Pedido.estado == "EN_PREPARACION"
+            )
+        ).one()
+
+        entregados = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+            .where(
+                Pedido.estado == "ENTREGADO"
+            )
+        ).one()
+
+        cancelados = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+            .where(
+                Pedido.estado == "CANCELADO"
+            )
+        ).one()
+
+        pedidos_hoy = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+            .where(
+                func.date(Pedido.created_at)
+                == func.current_date()
+            )
+        ).one()
+
+        ingresos_entregados = self.session.exec(
+            select(
+                func.coalesce(
+                    func.sum(Pedido.total),
+    0,
+                )
+            )
+            .where(
+                Pedido.estado == "ENTREGADO"
+            )
+        ).one()
+
+        return (
+            pendientes,
+            en_preparacion,
+            entregados,
+            cancelados,
+            pedidos_hoy,
+            float(ingresos_entregados),
+        )
