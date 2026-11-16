@@ -1,0 +1,114 @@
+from typing import Annotated
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Path,
+    status,
+)
+
+from app.core.database import session_factory
+from app.core.dependencies import CurrentActiveUserDep
+from app.modules.pedidos.schemas import (
+    PedidoCreate,
+    PedidoRead,
+)
+from app.modules.pedidos.service import (
+    PedidoNoEncontrado,
+    PedidoService,
+    ProductoNoDisponible,
+    ProductoNoEncontrado,
+    StockInsuficiente,
+)
+from app.modules.pedidos.unit_of_work import PedidoUnitOfWork
+
+router = APIRouter(
+    prefix="/pedidos",
+    tags=["pedidos"],
+)
+
+
+def get_pedido_service() -> PedidoService:
+    uow = PedidoUnitOfWork(
+        session_factory
+    )
+
+    return PedidoService(uow)
+
+
+PedidoServiceDep = Annotated[
+    PedidoService,
+    Depends(get_pedido_service),
+]
+
+@router.get(
+    "/mios",
+    response_model=list[PedidoRead],
+)
+def listar_mis_pedidos(
+    service: PedidoServiceDep,
+    current_user: CurrentActiveUserDep,
+) -> list[PedidoRead]:
+    return service.listar_mios(
+        usuario_id=current_user.id,
+    )
+
+
+@router.get(
+    "/{pedido_id}",
+    response_model=PedidoRead,
+)
+def obtener_pedido(
+    service: PedidoServiceDep,
+    current_user: CurrentActiveUserDep,
+    pedido_id: int = Path(
+        ...,
+        gt=0,
+    ),
+) -> PedidoRead:
+    try:
+        return service.obtener_por_id(
+            pedido_id=pedido_id,
+            usuario_id=current_user.id,
+        )
+
+    except PedidoNoEncontrado as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+
+@router.post(
+    "",
+    response_model=PedidoRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def crear_pedido(
+    data: PedidoCreate,
+    service: PedidoServiceDep,
+    current_user: CurrentActiveUserDep,
+) -> PedidoRead:
+    try:
+        return service.crear(
+            usuario_id=current_user.id,
+            data=data,
+        )
+
+    except ProductoNoEncontrado as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+
+    except ProductoNoDisponible as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        ) from error
+
+    except StockInsuficiente as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        ) from error
