@@ -17,10 +17,9 @@ const navLinkClass = ({
   py-2
   font-semibold
   transition
-  ${
-    isActive
-      ? "bg-app-primary text-white"
-      : "text-app-text hover:bg-app-background"
+  ${isActive
+    ? "bg-app-primary text-white"
+    : "text-app-text hover:bg-app-background"
   }
 `;
 
@@ -100,14 +99,16 @@ export const Navbar = () => {
                 Catálogo
               </NavLink>
 
-              <NavLink
-                to="/carrito"
-                className={navLinkClass}
-              >
-                Carrito
-              </NavLink>
+              {!isAdmin && (
+                <NavLink
+                  to="/carrito"
+                  className={navLinkClass}
+                >
+                  Carrito
+                </NavLink>
+              )}
 
-              {user && (
+              {user && !isAdmin && (
                 <NavLink
                   to="/mis-pedidos"
                   className={navLinkClass}
