@@ -7,11 +7,13 @@ import { LoadingState } from "@/shared/components/ui/LoadingState";
 
 import { ProductoList } from "../components/ProductoList";
 import { ProductoModal } from "../components/ProductoModal";
+import { StockModal } from "../components/StockModal";
 import { useProducts } from "../hooks/useProducts";
 
 import type {
   Producto,
   ProductoCreate,
+  ProductoStockUpdate,
 } from "../types/producto.types";
 
 export const ProductsPage = () => {
@@ -24,10 +26,14 @@ export const ProductsPage = () => {
     categoriasQuery,
     createMutation,
     updateMutation,
+    stockMutation,
     deleteMutation,
   } = useProducts();
 
   const [modalOpen, setModalOpen] =
+    useState(false);
+
+  const [stockModalOpen, setStockModalOpen] =
     useState(false);
 
   const [
@@ -37,6 +43,11 @@ export const ProductsPage = () => {
 
   const closeModal = () => {
     setModalOpen(false);
+    setProductoSeleccionado(null);
+  };
+
+  const closeStockModal = () => {
+    setStockModalOpen(false);
     setProductoSeleccionado(null);
   };
 
@@ -56,6 +67,15 @@ export const ProductsPage = () => {
 
     setProductoSeleccionado(producto);
     setModalOpen(true);
+  };
+
+  const handleStockProducto = (
+    producto: Producto,
+  ) => {
+    stockMutation.reset();
+
+    setProductoSeleccionado(producto);
+    setStockModalOpen(true);
   };
 
   const handleDeleteProducto = (
@@ -97,6 +117,24 @@ export const ProductsPage = () => {
     );
   };
 
+  const handleStockSubmit = (
+    stock: ProductoStockUpdate,
+  ) => {
+    if (!productoSeleccionado) {
+      return;
+    }
+
+    stockMutation.mutate(
+      {
+        id: productoSeleccionado.id,
+        stock,
+      },
+      {
+        onSuccess: closeStockModal,
+      },
+    );
+  };
+
   if (
     productosQuery.isPending ||
     categoriasQuery.isPending
@@ -129,7 +167,7 @@ export const ProductsPage = () => {
   }
 
   const activeMutation =
-    productoSeleccionado
+    productoSeleccionado && modalOpen
       ? updateMutation
       : createMutation;
 
@@ -181,6 +219,7 @@ export const ProductsPage = () => {
         productos={productosQuery.data.items}
         esAdmin={esAdmin}
         onEdit={handleEditProducto}
+        onStock={handleStockProducto}
         onDelete={handleDeleteProducto}
       />
 
@@ -202,6 +241,22 @@ export const ProductsPage = () => {
           onSubmit={handleSubmit}
         />
       )}
+
+      {stockModalOpen &&
+        productoSeleccionado && (
+          <StockModal
+            key={productoSeleccionado.id}
+            producto={productoSeleccionado}
+            isPending={stockMutation.isPending}
+            errorMessage={
+              stockMutation.isError
+                ? stockMutation.error.message
+                : null
+            }
+            onClose={closeStockModal}
+            onSubmit={handleStockSubmit}
+          />
+        )}
     </main>
   );
 };

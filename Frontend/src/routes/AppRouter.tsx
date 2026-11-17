@@ -10,12 +10,23 @@ import {
   RegisterPage,
 } from "@/features/auth";
 
+import { CatalogPage } from "@/features/products";
+
+import { Navbar } from "@/shared/components/Navbar";
+import { Toast } from "@/shared/components/Toast";
 import { UnauthorizedPage } from "@/shared/components/UnauthorizedPage";
 
 export const AppRouter = () => {
   return (
     <BrowserRouter>
+      <Navbar />
+
       <Routes>
+        <Route
+          path="/"
+          element={<CatalogPage />}
+        />
+
         <Route
           path="/login"
           element={<LoginPage />}
@@ -35,12 +46,14 @@ export const AppRouter = () => {
           path="*"
           element={
             <Navigate
-              to="/login"
+              to="/"
               replace
             />
           }
         />
       </Routes>
+
+      <Toast />
     </BrowserRouter>
   );
 };

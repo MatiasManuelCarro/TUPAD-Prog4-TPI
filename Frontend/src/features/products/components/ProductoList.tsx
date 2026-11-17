@@ -19,6 +19,7 @@ type ProductoListProps = {
   productos: Producto[];
   esAdmin: boolean;
   onEdit: (producto: Producto) => void;
+  onStock: (producto: Producto) => void;
   onDelete: (id: number) => void;
 };
 
@@ -26,6 +27,7 @@ export const ProductoList = ({
   productos,
   esAdmin,
   onEdit,
+  onStock,
   onDelete,
 }: ProductoListProps) => {
   const [sorting, setSorting] =
@@ -82,6 +84,15 @@ export const ProductoList = ({
                   }
                 >
                   Editar
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    onStock(row.original)
+                  }
+                >
+                  Stock
                 </Button>
 
                 <Button
@@ -175,8 +186,8 @@ export const ProductoList = ({
                             "
                           >
                             {flexRender(
-                              header.column
-                                .columnDef.header,
+                              header.column.columnDef
+                                .header,
                               header.getContext(),
                             )}
 
@@ -188,8 +199,8 @@ export const ProductoList = ({
                           </button>
                         ) : (
                           flexRender(
-                            header.column
-                              .columnDef.header,
+                            header.column.columnDef
+                              .header,
                             header.getContext(),
                           )
                         )}
@@ -230,8 +241,7 @@ export const ProductoList = ({
                         `}
                       >
                         {flexRender(
-                          cell.column.columnDef
-                            .cell,
+                          cell.column.columnDef.cell,
                           cell.getContext(),
                         )}
                       </td>
