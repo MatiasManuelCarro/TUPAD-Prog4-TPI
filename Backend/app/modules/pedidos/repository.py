@@ -19,18 +19,41 @@ class PedidoRepository(BaseRepository[Pedido]):
     def get_by_usuario(
         self,
         usuario_id: int,
-    ) -> list[Pedido]:
-        return list(
+        skip: int = 0,
+        limit: int = 20,
+        estado: str | None = None,
+    ) -> tuple[int, list[Pedido]]:
+        filtros = [
+            Pedido.usuario_id == usuario_id,
+        ]
+
+        if estado is not None:
+            filtros.append(
+                Pedido.estado == estado
+            )
+
+        total = self.session.exec(
+            select(func.count())
+            .select_from(Pedido)
+            .where(*filtros)
+        ).one()
+
+        pedidos = list(
             self.session.exec(
                 select(Pedido)
-                .where(
-                    Pedido.usuario_id == usuario_id
-                )
+                .where(*filtros)
                 .options(
                     selectinload(Pedido.items)
                 )
+                .order_by(
+                    Pedido.created_at.desc()
+                )
+                .offset(skip)
+                .limit(limit)
             ).all()
         )
+
+        return total, pedidos
 
     def get_by_id_with_items(
         self,
@@ -50,15 +73,25 @@ class PedidoRepository(BaseRepository[Pedido]):
         self,
         skip: int = 0,
         limit: int = 20,
+        estado: str | None = None,
     ) -> tuple[int, list[Pedido]]:
+        filtros = []
+
+        if estado is not None:
+            filtros.append(
+                Pedido.estado == estado
+            )
+
         total = self.session.exec(
             select(func.count())
             .select_from(Pedido)
+            .where(*filtros)
         ).one()
 
         pedidos = list(
             self.session.exec(
                 select(Pedido)
+                .where(*filtros)
                 .options(
                     selectinload(Pedido.items)
                 )
@@ -120,7 +153,7 @@ class PedidoRepository(BaseRepository[Pedido]):
             select(
                 func.coalesce(
                     func.sum(Pedido.total),
-    0,
+                    0,
                 )
             )
             .where(

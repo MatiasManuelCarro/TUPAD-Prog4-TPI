@@ -67,30 +67,28 @@ class PedidoService:
     ):
         self.uow = uow
 
-    def listar_mios(
+    def listar(
         self,
         usuario_id: int,
-    ) -> list[PedidoRead]:
-        with self.uow as uow:
-            pedidos = uow.pedidos.get_by_usuario(
-                usuario_id
-            )
-
-            return [
-                PedidoRead.model_validate(pedido)
-                for pedido in pedidos
-            ]
-
-    def listar_admin(
-        self,
+        es_admin: bool,
         skip: int = 0,
         limit: int = 20,
+        estado: str | None = None,
     ) -> PedidosPaginados:
         with self.uow as uow:
-            total, pedidos = uow.pedidos.search(
-                skip=skip,
-                limit=limit,
-            )
+            if es_admin:
+                total, pedidos = uow.pedidos.search(
+                    skip=skip,
+                    limit=limit,
+                    estado=estado,
+                )
+            else:
+                total, pedidos = uow.pedidos.get_by_usuario(
+                    usuario_id=usuario_id,
+                    skip=skip,
+                    limit=limit,
+                    estado=estado,
+                )
 
             return PedidosPaginados(
                 total=total,
@@ -126,18 +124,24 @@ class PedidoService:
         self,
         pedido_id: int,
         usuario_id: int,
+        es_admin: bool,
     ) -> PedidoRead:
         with self.uow as uow:
             pedido = uow.pedidos.get_by_id_with_items(
                 pedido_id
             )
 
-            if (
-                pedido is None
-                or pedido.usuario_id != usuario_id
-            ):
+            if pedido is None:
                 raise PedidoNoEncontrado(
                     f"Pedido {pedido_id} no encontrado"
+                )
+
+            if (
+                pedido.usuario_id != usuario_id
+                and not es_admin
+            ):
+                raise PedidoAjeno(
+                    "No tienes permisos para consultar este pedido"
                 )
 
             return PedidoRead.model_validate(
