@@ -59,16 +59,24 @@ export const LoginPage = () => {
           w-full
           rounded-xl
           border
+          border-app-border
+          bg-app-surface
           p-6
           shadow-sm
         "
       >
         <div className="mb-6">
-          <h1 className="text-3xl font-bold">
+          <h1
+            className="
+              text-3xl
+              font-bold
+              text-app-text
+            "
+          >
             Iniciar sesión
           </h1>
 
-          <p className="mt-1 text-gray-600">
+          <p className="mt-1 text-app-text/70">
             Ingresa con tu cuenta para continuar.
           </p>
         </div>
@@ -98,7 +106,12 @@ export const LoginPage = () => {
               <div>
                 <label
                   htmlFor={field.name}
-                  className="mb-1 block font-medium"
+                  className="
+                    mb-1
+                    block
+                    font-medium
+                    text-app-text
+                  "
                 >
                   Usuario
                 </label>
@@ -118,13 +131,15 @@ export const LoginPage = () => {
                     w-full
                     rounded-lg
                     border
-                    border-gray-300
+                    border-app-border
+                    bg-app-background
                     p-2
+                    text-app-text
                   "
                 />
 
                 {!field.state.meta.isValid && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-app-danger">
                     {field.state.meta.errors.join(", ")}
                   </p>
                 )}
@@ -145,7 +160,12 @@ export const LoginPage = () => {
               <div>
                 <label
                   htmlFor={field.name}
-                  className="mb-1 block font-medium"
+                  className="
+                    mb-1
+                    block
+                    font-medium
+                    text-app-text
+                  "
                 >
                   Contraseña
                 </label>
@@ -165,13 +185,15 @@ export const LoginPage = () => {
                     w-full
                     rounded-lg
                     border
-                    border-gray-300
+                    border-app-border
+                    bg-app-background
                     p-2
+                    text-app-text
                   "
                 />
 
                 {!field.state.meta.isValid && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-app-danger">
                     {field.state.meta.errors.join(", ")}
                   </p>
                 )}
@@ -180,7 +202,7 @@ export const LoginPage = () => {
           </form.Field>
 
           {errorMessage && (
-            <p className="text-sm text-red-600">
+            <p className="text-sm text-app-danger">
               {errorMessage}
             </p>
           )}
@@ -191,11 +213,13 @@ export const LoginPage = () => {
             className="
               w-full
               rounded-lg
-              bg-blue-600
+              bg-app-primary
               px-4
               py-2
               font-semibold
               text-white
+              transition
+              hover:opacity-90
               disabled:opacity-50
             "
           >
@@ -204,11 +228,14 @@ export const LoginPage = () => {
               : "Iniciar sesión"}
           </button>
 
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-app-text/70">
             ¿No tienes una cuenta?{" "}
             <Link
               to="/register"
-              className="font-semibold text-blue-600"
+              className="
+                font-semibold
+                text-app-primary
+              "
             >
               Registrarse
             </Link>

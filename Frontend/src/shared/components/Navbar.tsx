@@ -1,5 +1,6 @@
 import {
   NavLink,
+  useLocation,
   useNavigate,
 } from "react-router-dom";
 
@@ -12,19 +13,20 @@ const navLinkClass = ({
   isActive: boolean;
 }) => `
   rounded-lg
-  px-4
+  px-3
   py-2
   font-semibold
   transition
   ${
     isActive
-      ? "bg-blue-600 text-white"
-      : "text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+      ? "bg-app-primary text-white"
+      : "text-app-text hover:bg-app-background"
   }
 `;
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { user, logout } = useAuth();
 
@@ -38,6 +40,10 @@ export const Navbar = () => {
 
   const isAdmin = user?.role === "admin";
 
+  const isAuthPage =
+    location.pathname === "/login" ||
+    location.pathname === "/register";
+
   const handleLogout = async () => {
     await logout();
 
@@ -48,10 +54,8 @@ export const Navbar = () => {
     <header
       className="
         border-b
-        border-gray-200
-        bg-white
-        dark:border-gray-700
-        dark:bg-gray-900
+        border-app-border
+        bg-app-surface
       "
     >
       <nav
@@ -72,8 +76,7 @@ export const Navbar = () => {
           className="
             text-2xl
             font-bold
-            text-gray-900
-            dark:text-white
+            text-app-text
           "
         >
           Food Store
@@ -87,36 +90,71 @@ export const Navbar = () => {
             gap-2
           "
         >
-          <NavLink
-            to="/"
-            className={navLinkClass}
-          >
-            Catálogo
-          </NavLink>
+          {!isAuthPage && (
+            <>
+              <NavLink
+                to="/"
+                end
+                className={navLinkClass}
+              >
+                Catálogo
+              </NavLink>
 
-          <NavLink
-            to="/carrito"
-            className={navLinkClass}
-          >
-            Carrito
-          </NavLink>
+              <NavLink
+                to="/carrito"
+                className={navLinkClass}
+              >
+                Carrito
+              </NavLink>
 
-          {user && (
-            <NavLink
-              to="/mis-pedidos"
-              className={navLinkClass}
-            >
-              Mis pedidos
-            </NavLink>
-          )}
+              {user && (
+                <NavLink
+                  to="/mis-pedidos"
+                  className={navLinkClass}
+                >
+                  Mis pedidos
+                </NavLink>
+              )}
 
-          {isAdmin && (
-            <NavLink
-              to="/admin/resumen"
-              className={navLinkClass}
-            >
-              Administración
-            </NavLink>
+              {isAdmin && (
+                <>
+                  <NavLink
+                    to="/admin/resumen"
+                    className={navLinkClass}
+                  >
+                    Resumen
+                  </NavLink>
+
+                  <NavLink
+                    to="/admin/categorias"
+                    className={navLinkClass}
+                  >
+                    Categorías
+                  </NavLink>
+
+                  <NavLink
+                    to="/admin/productos"
+                    className={navLinkClass}
+                  >
+                    Productos
+                  </NavLink>
+
+                  <NavLink
+                    to="/admin/pedidos"
+                    className={navLinkClass}
+                  >
+                    Pedidos
+                  </NavLink>
+
+                  <NavLink
+                    to="/admin/usuarios"
+                    className={navLinkClass}
+                  >
+                    Usuarios
+                  </NavLink>
+                </>
+              )}
+            </>
           )}
 
           <button
@@ -125,60 +163,63 @@ export const Navbar = () => {
             className="
               rounded-lg
               border
-              border-gray-300
-              px-4
+              border-app-border
+              px-3
               py-2
               font-semibold
-              text-gray-700
-              hover:bg-gray-100
-              dark:border-gray-600
-              dark:text-gray-200
-              dark:hover:bg-gray-800
+              text-app-text
+              transition
+              hover:bg-app-background
             "
           >
-            {darkMode ? "Modo claro" : "Modo oscuro"}
+            {darkMode
+              ? "Modo claro"
+              : "Modo oscuro"}
           </button>
 
-          {user ? (
+          {!isAuthPage && (
             <>
-              <span
-                className="
-                  px-2
-                  text-sm
-                  text-gray-600
-                  dark:text-gray-300
-                "
-              >
-                {user.full_name} · {user.role}
-              </span>
+              {user ? (
+                <>
+                  <span
+                    className="
+                      px-2
+                      text-sm
+                      text-app-text/70
+                    "
+                  >
+                    {user.full_name} · {user.role}
+                  </span>
 
-              <button
-                type="button"
-                onClick={() => void handleLogout()}
-                className="
-                  rounded-lg
-                  border
-                  border-gray-300
-                  px-4
-                  py-2
-                  font-semibold
-                  text-gray-700
-                  hover:bg-gray-100
-                  dark:border-gray-600
-                  dark:text-gray-200
-                  dark:hover:bg-gray-800
-                "
-              >
-                Cerrar sesión
-              </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      void handleLogout()
+                    }
+                    className="
+                      rounded-lg
+                      border
+                      border-app-border
+                      px-3
+                      py-2
+                      font-semibold
+                      text-app-text
+                      transition
+                      hover:bg-app-background
+                    "
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
+              ) : (
+                <NavLink
+                  to="/login"
+                  className={navLinkClass}
+                >
+                  Iniciar sesión
+                </NavLink>
+              )}
             </>
-          ) : (
-            <NavLink
-              to="/login"
-              className={navLinkClass}
-            >
-              Iniciar sesión
-            </NavLink>
           )}
         </div>
       </nav>
