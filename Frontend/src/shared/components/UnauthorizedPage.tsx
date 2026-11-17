@@ -37,9 +37,9 @@ export const UnauthorizedPage = () => {
         </p>
 
         <div className="mt-6">
-          <Link to="/categories">
+          <Link to="/">
             <Button>
-              Volver a categorías
+              Volver al inicio
             </Button>
           </Link>
         </div>

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   flexRender,
   getCoreRowModel,
@@ -48,9 +50,15 @@ const getTextoAccion = (
 };
 
 export const AdminPedidosPage = () => {
+  const [estado, setEstado] =
+    useState<EstadoPedido | undefined>(
+      undefined,
+    );
+
   const pedidosQuery = usePedidos({
     skip: 0,
     limit: 100,
+    estado,
   });
 
   const cambiarEstadoMutation =
@@ -144,8 +152,7 @@ export const AdminPedidosPage = () => {
 
         const puedeCancelar =
           pedido.estado === "PENDIENTE" ||
-          pedido.estado ===
-            "EN_PREPARACION";
+          pedido.estado === "EN_PREPARACION";
 
         return (
           <div
@@ -220,26 +227,8 @@ export const AdminPedidosPage = () => {
     );
   }
 
-  if (
-    pedidosQuery.data.items.length === 0
-  ) {
-    return (
-      <main className="mx-auto max-w-6xl p-6">
-        <h1
-          className="
-            mb-6
-            text-3xl
-            font-bold
-            text-app-text
-          "
-        >
-          Pedidos
-        </h1>
-
-        <EmptyState message="No hay pedidos para mostrar." />
-      </main>
-    );
-  }
+  const sinPedidos =
+    pedidosQuery.data.items.length === 0;
 
   return (
     <main
@@ -264,151 +253,213 @@ export const AdminPedidosPage = () => {
         <p className="mt-1 text-app-text/70">
           Administra el estado de los pedidos.
         </p>
+
+        <div className="mt-4 max-w-xs">
+          <label
+            htmlFor="estado"
+            className="
+              mb-1
+              block
+              font-medium
+              text-app-text
+            "
+          >
+            Filtrar por estado
+          </label>
+
+          <select
+            id="estado"
+            value={estado ?? ""}
+            onChange={(event) => {
+              const value =
+                event.target.value;
+
+              setEstado(
+                value === ""
+                  ? undefined
+                  : (value as EstadoPedido),
+              );
+            }}
+            className="
+              w-full
+              rounded-lg
+              border
+              border-app-border
+              bg-app-background
+              p-2
+              text-app-text
+            "
+          >
+            <option value="">
+              Todos
+            </option>
+
+            <option value="PENDIENTE">
+              Pendiente
+            </option>
+
+            <option value="EN_PREPARACION">
+              En preparación
+            </option>
+
+            <option value="ENTREGADO">
+              Entregado
+            </option>
+
+            <option value="CANCELADO">
+              Cancelado
+            </option>
+          </select>
+        </div>
       </div>
 
-      <div
-        className="
-          overflow-hidden
-          rounded-xl
-          border
-          border-app-border
-          bg-app-surface
-          shadow-sm
-        "
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              {table
-                .getHeaderGroups()
-                .map((headerGroup) => (
-                  <tr
-                    key={headerGroup.id}
-                    className="
-                      border-b
-                      border-app-border
-                    "
-                  >
-                    {headerGroup.headers.map(
-                      (header) => (
-                        <th
-                          key={header.id}
-                          className={`
-                            px-5
-                            py-4
-                            font-semibold
-                            text-app-text
-                            ${
-                              header.column.id ===
-                              "acciones"
-                                ? "text-right"
-                                : ""
-                            }
-                          `}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column
-                                  .columnDef
-                                  .header,
-                                header.getContext(),
-                              )}
-                        </th>
-                      ),
-                    )}
-                  </tr>
-                ))}
-            </thead>
-
-            <tbody>
-              {table
-                .getRowModel()
-                .rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="
-                      border-b
-                      border-app-border
-                      last:border-b-0
-                    "
-                  >
-                    {row
-                      .getVisibleCells()
-                      .map((cell) => (
-                        <td
-                          key={cell.id}
-                          className={`
-                            px-5
-                            py-4
-                            text-app-text
-                            ${
-                              cell.column.id ===
-                              "acciones"
-                                ? "text-right"
-                                : ""
-                            }
-                          `}
-                        >
-                          {flexRender(
-                            cell.column
-                              .columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      ))}
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-
+      {sinPedidos ? (
+        <EmptyState message="No hay pedidos para mostrar." />
+      ) : (
         <div
           className="
-            flex
-            items-center
-            justify-between
-            gap-4
-            border-t
+            overflow-hidden
+            rounded-xl
+            border
             border-app-border
-            px-5
-            py-4
+            bg-app-surface
+            shadow-sm
           "
         >
-          <span className="text-sm text-app-text/70">
-            Página{" "}
-            {table.getState().pagination
-              .pageIndex + 1}{" "}
-            de {table.getPageCount()}
-          </span>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                {table
+                  .getHeaderGroups()
+                  .map((headerGroup) => (
+                    <tr
+                      key={headerGroup.id}
+                      className="
+                        border-b
+                        border-app-border
+                      "
+                    >
+                      {headerGroup.headers.map(
+                        (header) => (
+                          <th
+                            key={header.id}
+                            className={`
+                              px-5
+                              py-4
+                              font-semibold
+                              text-app-text
+                              ${
+                                header.column.id ===
+                                "acciones"
+                                  ? "text-right"
+                                  : ""
+                              }
+                            `}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column
+                                    .columnDef
+                                    .header,
+                                  header.getContext(),
+                                )}
+                          </th>
+                        ),
+                      )}
+                    </tr>
+                  ))}
+              </thead>
 
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              onClick={() =>
-                table.previousPage()
-              }
-              disabled={
-                !table.getCanPreviousPage()
-              }
-            >
-              Anterior
-            </Button>
+              <tbody>
+                {table
+                  .getRowModel()
+                  .rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="
+                        border-b
+                        border-app-border
+                        last:border-b-0
+                      "
+                    >
+                      {row
+                        .getVisibleCells()
+                        .map((cell) => (
+                          <td
+                            key={cell.id}
+                            className={`
+                              px-5
+                              py-4
+                              text-app-text
+                              ${
+                                cell.column.id ===
+                                "acciones"
+                                  ? "text-right"
+                                  : ""
+                              }
+                            `}
+                          >
+                            {flexRender(
+                              cell.column
+                                .columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </td>
+                        ))}
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
 
-            <Button
-              variant="secondary"
-              onClick={() =>
-                table.nextPage()
-              }
-              disabled={
-                !table.getCanNextPage()
-              }
-            >
-              Siguiente
-            </Button>
+          <div
+            className="
+              flex
+              items-center
+              justify-between
+              gap-4
+              border-t
+              border-app-border
+              px-5
+              py-4
+            "
+          >
+            <span className="text-sm text-app-text/70">
+              Página{" "}
+              {table.getState().pagination
+                .pageIndex + 1}{" "}
+              de {table.getPageCount()}
+            </span>
+
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  table.previousPage()
+                }
+                disabled={
+                  !table.getCanPreviousPage()
+                }
+              >
+                Anterior
+              </Button>
+
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  table.nextPage()
+                }
+                disabled={
+                  !table.getCanNextPage()
+                }
+              >
+                Siguiente
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 };
