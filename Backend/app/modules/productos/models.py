@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-
 if TYPE_CHECKING:
     from app.modules.categorias.models import Categoria
     from app.modules.pedidos.models import DetallePedido

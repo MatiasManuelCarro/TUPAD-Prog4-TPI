@@ -26,7 +26,6 @@ from app.modules.productos.service import (
 from app.modules.productos.unit_of_work import ProductoUnitOfWork
 from app.modules.usuarios.models import Usuario
 
-
 router = APIRouter(
     prefix="/productos",
     tags=["productos"],

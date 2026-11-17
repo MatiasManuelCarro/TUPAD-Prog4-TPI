@@ -26,8 +26,38 @@ class StockInsuficiente(Exception):
     pass
 
 
+class ProductoRepetido(Exception):
+    pass
+
+
 class PedidoNoEncontrado(Exception):
     pass
+
+
+class TransicionInvalida(Exception):
+    pass
+
+
+class PedidoAjeno(Exception):
+    pass
+
+
+class CancelacionNoPermitida(Exception):
+    pass
+
+
+TRANSICIONES_VALIDAS = {
+    "PENDIENTE": {
+        "EN_PREPARACION",
+        "CANCELADO",
+    },
+    "EN_PREPARACION": {
+        "ENTREGADO",
+        "CANCELADO",
+    },
+    "ENTREGADO": set(),
+    "CANCELADO": set(),
+}
 
 
 class PedidoService:
@@ -129,7 +159,80 @@ class PedidoService:
                     f"Pedido {pedido_id} no encontrado"
                 )
 
+            estados_permitidos = TRANSICIONES_VALIDAS[
+                pedido.estado
+            ]
+
+            if data.estado not in estados_permitidos:
+                raise TransicionInvalida(
+                    f"No se puede pasar de {pedido.estado} "
+                    f"a {data.estado}"
+                )
+
+            if data.estado == "CANCELADO":
+                for detalle in pedido.items:
+                    producto = uow.productos.get_by_id(
+                        detalle.producto_id
+                    )
+
+                    if producto is not None:
+                        producto.stock += detalle.cantidad
+                        producto.disponible = True
+
+                        uow.productos.add(
+                            producto
+                        )
+
             pedido.estado = data.estado
+            pedido.updated_at = datetime.now(UTC)
+
+            uow.pedidos.add(
+                pedido
+            )
+
+            return PedidoRead.model_validate(
+                pedido
+            )
+
+    def cancelar(
+        self,
+        pedido_id: int,
+        usuario_id: int,
+    ) -> PedidoRead:
+        with self.uow as uow:
+            pedido = uow.pedidos.get_by_id_with_items(
+                pedido_id
+            )
+
+            if pedido is None:
+                raise PedidoNoEncontrado(
+                    f"Pedido {pedido_id} no encontrado"
+                )
+
+            if pedido.usuario_id != usuario_id:
+                raise PedidoAjeno(
+                    "No tienes permisos para cancelar este pedido"
+                )
+
+            if pedido.estado != "PENDIENTE":
+                raise CancelacionNoPermitida(
+                    "Solo se puede cancelar un pedido PENDIENTE"
+                )
+
+            for detalle in pedido.items:
+                producto = uow.productos.get_by_id(
+                    detalle.producto_id
+                )
+
+                if producto is not None:
+                    producto.stock += detalle.cantidad
+                    producto.disponible = True
+
+                    uow.productos.add(
+                        producto
+                    )
+
+            pedido.estado = "CANCELADO"
             pedido.updated_at = datetime.now(UTC)
 
             uow.pedidos.add(
@@ -146,6 +249,16 @@ class PedidoService:
         data: PedidoCreate,
     ) -> PedidoRead:
         with self.uow as uow:
+            productos_ids = [
+                item.producto_id
+                for item in data.items
+            ]
+
+            if len(productos_ids) != len(set(productos_ids)):
+                raise ProductoRepetido(
+                    "No se puede repetir un producto en el pedido"
+                )
+
             pedido = Pedido(
                 usuario_id=usuario_id,
                 estado="PENDIENTE",
@@ -209,7 +322,10 @@ class PedidoService:
                     producto
                 )
 
-                detalles.append(detalle)
+                detalles.append(
+                    detalle
+                )
+
                 total += subtotal
 
             pedido.total = total

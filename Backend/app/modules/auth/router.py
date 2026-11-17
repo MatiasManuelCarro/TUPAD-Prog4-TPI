@@ -1,14 +1,5 @@
 from typing import Annotated
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    HTTPException,
-    Response,
-    status,
-)
-from fastapi.security import OAuth2PasswordRequestForm
-
 from app.core.config import settings
 from app.core.dependencies import (
     CurrentActiveUserDep,
@@ -29,7 +20,14 @@ from app.modules.usuarios.service import (
     UsuarioDuplicado,
     UsuarioService,
 )
-
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Response,
+    status,
+)
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(
     prefix="/auth",

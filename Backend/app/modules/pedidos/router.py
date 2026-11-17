@@ -22,11 +22,15 @@ from app.modules.pedidos.schemas import (
     ResumenPedidos,
 )
 from app.modules.pedidos.service import (
+    CancelacionNoPermitida,
+    PedidoAjeno,
     PedidoNoEncontrado,
     PedidoService,
     ProductoNoDisponible,
     ProductoNoEncontrado,
+    ProductoRepetido,
     StockInsuficiente,
+    TransicionInvalida,
 )
 from app.modules.pedidos.unit_of_work import PedidoUnitOfWork
 from app.modules.usuarios.models import Usuario
@@ -102,6 +106,13 @@ def cambiar_estado_pedido(
             detail=str(error),
         ) from error
 
+    except TransicionInvalida as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        ) from error
+
+
 @router.get(
     "/mios",
     response_model=list[PedidoRead],
@@ -114,6 +125,7 @@ def listar_mis_pedidos(
         usuario_id=current_user.id,
     )
 
+
 @router.get(
     "/admin/resumen",
     response_model=ResumenPedidos,
@@ -123,6 +135,44 @@ def obtener_resumen_pedidos(
     admin: AdminUserDep,
 ) -> ResumenPedidos:
     return service.obtener_resumen()
+
+
+@router.patch(
+    "/{pedido_id}/cancelar",
+    response_model=PedidoRead,
+)
+def cancelar_pedido(
+    service: PedidoServiceDep,
+    current_user: CurrentActiveUserDep,
+    pedido_id: int = Path(
+        ...,
+        gt=0,
+    ),
+) -> PedidoRead:
+    try:
+        return service.cancelar(
+            pedido_id=pedido_id,
+            usuario_id=current_user.id,
+        )
+
+    except PedidoNoEncontrado as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+
+    except PedidoAjeno as error:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(error),
+        ) from error
+
+    except CancelacionNoPermitida as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        ) from error
+
 
 @router.get(
     "/{pedido_id}",
@@ -178,6 +228,12 @@ def crear_pedido(
         ) from error
 
     except StockInsuficiente as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        ) from error
+
+    except ProductoRepetido as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(error),

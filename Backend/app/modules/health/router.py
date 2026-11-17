@@ -1,6 +1,7 @@
-from app.core.database import SessionDep
 from fastapi import APIRouter
 from sqlalchemy import text
+
+from app.core.dependencies import SessionDep
 
 router = APIRouter(
     prefix="/health",
@@ -14,7 +15,11 @@ def health():
 
 
 @router.get("/db")
-def health_db(session: SessionDep):
-    session.exec(text("SELECT 1"))
+def health_db(
+    session: SessionDep,
+):
+    session.exec(
+        text("SELECT 1")
+    )
 
     return {"status": "ok"}

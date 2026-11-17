@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 from sqlalchemy import Column, String
 from sqlmodel import Field, Relationship, SQLModel
 
-
 if TYPE_CHECKING:
     from app.modules.pedidos.models import Pedido
 

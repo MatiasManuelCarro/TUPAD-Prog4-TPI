@@ -23,7 +23,6 @@ from app.modules.categorias.service import (
 from app.modules.categorias.unit_of_work import CategoriaUnitOfWork
 from app.modules.usuarios.models import Usuario
 
-
 router = APIRouter(
     prefix="/categorias",
     tags=["categorias"],

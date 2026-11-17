@@ -21,7 +21,6 @@ from app.modules.usuarios.service import (
     UsuarioService,
 )
 
-
 router = APIRouter(
     prefix="/admin/usuarios",
     tags=["usuarios"],
