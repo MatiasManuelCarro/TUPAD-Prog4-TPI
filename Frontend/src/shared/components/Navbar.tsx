@@ -99,16 +99,14 @@ export const Navbar = () => {
                 Catálogo
               </NavLink>
 
-              {!isAdmin && (
-                <NavLink
-                  to="/carrito"
-                  className={navLinkClass}
-                >
-                  Carrito
-                </NavLink>
-              )}
+              <NavLink
+                to="/carrito"
+                className={navLinkClass}
+              >
+                Carrito
+              </NavLink>
 
-              {user && !isAdmin && (
+              {user && (
                 <NavLink
                   to="/mis-pedidos"
                   className={navLinkClass}

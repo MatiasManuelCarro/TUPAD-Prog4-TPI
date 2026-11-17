@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/shared/store/notificationStore";
 
 import {
@@ -45,9 +46,12 @@ export const useCategories = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo crear la categoría",
+        handleApiError(
+          error,
+          "No se pudo crear la categoría",
+        ),
       );
     },
   });
@@ -69,9 +73,12 @@ export const useCategories = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo actualizar la categoría",
+        handleApiError(
+          error,
+          "No se pudo actualizar la categoría",
+        ),
       );
     },
   });
@@ -89,9 +96,12 @@ export const useCategories = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo eliminar la categoría",
+        handleApiError(
+          error,
+          "No se pudo eliminar la categoría",
+        ),
       );
     },
   });

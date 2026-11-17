@@ -4,13 +4,14 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+import { handleApiError } from "@/shared/api/handleApiError";
+import { useNotificationStore } from "@/shared/store/notificationStore";
+
 import {
   activarUsuario,
   desactivarUsuario,
   getUsuarios,
 } from "../services/userService";
-
-import { useNotificationStore } from "@/shared/store/notificationStore";
 
 export const useUsers = () => {
   const queryClient = useQueryClient();
@@ -37,9 +38,12 @@ export const useUsers = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo activar el usuario",
+        handleApiError(
+          error,
+          "No se pudo activar el usuario",
+        ),
       );
     },
   });
@@ -57,9 +61,12 @@ export const useUsers = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo desactivar el usuario",
+        handleApiError(
+          error,
+          "No se pudo desactivar el usuario",
+        ),
       );
     },
   });

@@ -1,6 +1,10 @@
 import { useForm } from "@tanstack/react-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 
+import { handleApiError } from "@/shared/api/handleApiError";
 import { Button } from "@/shared/components/ui/Button";
 import { useNotificationStore } from "@/shared/store/notificationStore";
 import { useCartStore } from "@/store/cartStore";
@@ -19,8 +23,12 @@ export const CheckoutPage = () => {
     (state) => state.items,
   );
 
-  const clearCart = useCartStore(
-    (state) => state.clearCart,
+  const total = useCartStore(
+    (state) => state.total,
+  );
+
+  const vaciar = useCartStore(
+    (state) => state.vaciar,
   );
 
   const showNotification = useNotificationStore(
@@ -28,13 +36,6 @@ export const CheckoutPage = () => {
   );
 
   const crearPedidoMutation = useCrearPedido();
-
-  const total = items.reduce(
-    (acumulador, item) =>
-      acumulador +
-      item.producto.precio_base * item.cantidad,
-    0,
-  );
 
   const form = useForm({
     defaultValues: {
@@ -48,7 +49,7 @@ export const CheckoutPage = () => {
 
       const pedido: PedidoCreate = {
         items: items.map((item) => ({
-          producto_id: item.producto.id,
+          producto_id: item.producto_id,
           cantidad: item.cantidad,
         })),
         forma_pago: value.forma_pago,
@@ -64,7 +65,7 @@ export const CheckoutPage = () => {
         pedido,
         {
           onSuccess: () => {
-            clearCart();
+            vaciar();
 
             showNotification(
               "Pedido creado correctamente",
@@ -73,9 +74,12 @@ export const CheckoutPage = () => {
             navigate("/mis-pedidos");
           },
 
-          onError: () => {
+          onError: (error) => {
             showNotification(
-              "No se pudo crear el pedido",
+              handleApiError(
+                error,
+                "No se pudo crear el pedido",
+              ),
             );
           },
         },
@@ -102,7 +106,13 @@ export const CheckoutPage = () => {
       "
     >
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-app-text">
+        <h1
+          className="
+            text-3xl
+            font-bold
+            text-app-text
+          "
+        >
           Finalizar compra
         </h1>
 
@@ -131,14 +141,17 @@ export const CheckoutPage = () => {
           form.handleSubmit();
         }}
       >
-        <form.Field
-          name="forma_pago"
-        >
+        <form.Field name="forma_pago">
           {(field) => (
             <div>
               <label
                 htmlFor={field.name}
-                className="mb-1 block font-medium text-app-text"
+                className="
+                  mb-1
+                  block
+                  font-medium
+                  text-app-text
+                "
               >
                 Forma de pago
               </label>
@@ -196,7 +209,12 @@ export const CheckoutPage = () => {
             <div>
               <label
                 htmlFor={field.name}
-                className="mb-1 block font-medium text-app-text"
+                className="
+                  mb-1
+                  block
+                  font-medium
+                  text-app-text
+                "
               >
                 Dirección de entrega
               </label>
@@ -237,7 +255,12 @@ export const CheckoutPage = () => {
             <div>
               <label
                 htmlFor={field.name}
-                className="mb-1 block font-medium text-app-text"
+                className="
+                  mb-1
+                  block
+                  font-medium
+                  text-app-text
+                "
               >
                 Notas
               </label>
@@ -279,11 +302,22 @@ export const CheckoutPage = () => {
               justify-between
             "
           >
-            <span className="font-semibold text-app-text">
+            <span
+              className="
+                font-semibold
+                text-app-text
+              "
+            >
               Total
             </span>
 
-            <span className="text-xl font-bold text-app-primary">
+            <span
+              className="
+                text-xl
+                font-bold
+                text-app-primary
+              "
+            >
               ${total.toFixed(2)}
             </span>
           </div>
@@ -307,14 +341,18 @@ export const CheckoutPage = () => {
             onClick={() =>
               navigate("/carrito")
             }
-            disabled={crearPedidoMutation.isPending}
+            disabled={
+              crearPedidoMutation.isPending
+            }
           >
             Volver
           </Button>
 
           <Button
             type="submit"
-            disabled={crearPedidoMutation.isPending}
+            disabled={
+              crearPedidoMutation.isPending
+            }
           >
             {crearPedidoMutation.isPending
               ? "Confirmando..."

@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 
 import { getCategorias } from "@/features/categories";
+import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/shared/store/notificationStore";
 
 import {
@@ -64,9 +65,12 @@ export const useProducts = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo crear el producto",
+        handleApiError(
+          error,
+          "No se pudo crear el producto",
+        ),
       );
     },
   });
@@ -88,9 +92,12 @@ export const useProducts = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo actualizar el producto",
+        handleApiError(
+          error,
+          "No se pudo actualizar el producto",
+        ),
       );
     },
   });
@@ -112,9 +119,12 @@ export const useProducts = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo actualizar el stock",
+        handleApiError(
+          error,
+          "No se pudo actualizar el stock",
+        ),
       );
     },
   });
@@ -132,9 +142,12 @@ export const useProducts = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo eliminar el producto",
+        handleApiError(
+          error,
+          "No se pudo eliminar el producto",
+        ),
       );
     },
   });

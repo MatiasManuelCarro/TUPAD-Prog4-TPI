@@ -40,16 +40,6 @@ export const AppRouter = () => {
 
       <Routes>
         <Route
-          path="/"
-          element={<CatalogPage />}
-        />
-
-        <Route
-          path="/carrito"
-          element={<CarritoPage />}
-        />
-
-        <Route
           path="/login"
           element={<LoginPage />}
         />
@@ -57,6 +47,16 @@ export const AppRouter = () => {
         <Route
           path="/register"
           element={<RegisterPage />}
+        />
+
+        <Route
+          path="/"
+          element={<CatalogPage />}
+        />
+
+        <Route
+          path="/carrito"
+          element={<CarritoPage />}
         />
 
         <Route

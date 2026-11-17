@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-query";
 
 import { useNotificationStore } from "@/shared/store/notificationStore";
-
+import { handleApiError } from "@/shared/api/handleApiError";
 import { cancelarPedido } from "../api/pedidos";
 
 export const useCancelarPedido = () => {
@@ -27,9 +27,12 @@ export const useCancelarPedido = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo cancelar el pedido",
+        handleApiError(
+          error,
+          "No se pudo cancelar el pedido",
+        ),
       );
     },
   });

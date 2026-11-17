@@ -4,118 +4,125 @@ import { persist } from "zustand/middleware";
 import type { Producto } from "@/features/products";
 
 export type CartItem = {
-  producto: Producto;
+  producto_id: number;
+  nombre: string;
+  precio_unitario: number;
   cantidad: number;
 };
 
 type CartState = {
   items: CartItem[];
+  total: number;
 
-  addItem: (producto: Producto) => void;
+  agregar: (producto: Producto) => void;
 
-  removeItem: (productoId: number) => void;
+  quitar: (productoId: number) => void;
 
-  updateQuantity: (
+  cambiarCantidad: (
     productoId: number,
     cantidad: number,
   ) => void;
 
-  clearCart: () => void;
+  vaciar: () => void;
+};
+
+const calcularTotal = (
+  items: CartItem[],
+): number => {
+  return items.reduce(
+    (acumulador, item) =>
+      acumulador +
+      item.precio_unitario * item.cantidad,
+    0,
+  );
 };
 
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       items: [],
+      total: 0,
 
-      addItem: (producto) =>
+      agregar: (producto) =>
         set((state) => {
-          const existingItem = state.items.find(
+          const itemExistente = state.items.find(
             (item) =>
-              item.producto.id === producto.id,
+              item.producto_id === producto.id,
           );
 
-          if (existingItem) {
-            if (
-              existingItem.cantidad >=
-              producto.stock
-            ) {
-              return state;
-            }
-
-            return {
-              items: state.items.map((item) =>
-                item.producto.id ===
-                producto.id
+          const items = itemExistente
+            ? state.items.map((item) =>
+                item.producto_id === producto.id
                   ? {
                       ...item,
-                      cantidad:
-                        item.cantidad + 1,
+                      cantidad: item.cantidad + 1,
                     }
                   : item,
-              ),
-            };
-          }
-
-          if (
-            producto.stock <= 0 ||
-            !producto.disponible
-          ) {
-            return state;
-          }
+              )
+            : [
+                ...state.items,
+                {
+                  producto_id: producto.id,
+                  nombre: producto.nombre,
+                  precio_unitario:
+                    producto.precio_base,
+                  cantidad: 1,
+                },
+              ];
 
           return {
-            items: [
-              ...state.items,
-              {
-                producto,
-                cantidad: 1,
-              },
-            ],
+            items,
+            total: calcularTotal(items),
           };
         }),
 
-      removeItem: (productoId) =>
-        set((state) => ({
-          items: state.items.filter(
+      quitar: (productoId) =>
+        set((state) => {
+          const items = state.items.filter(
             (item) =>
-              item.producto.id !==
-              productoId,
-          ),
-        })),
+              item.producto_id !== productoId,
+          );
 
-      updateQuantity: (
+          return {
+            items,
+            total: calcularTotal(items),
+          };
+        }),
+
+      cambiarCantidad: (
         productoId,
         cantidad,
       ) =>
-        set((state) => ({
-          items: state.items.map((item) => {
-            if (
-              item.producto.id !==
-              productoId
-            ) {
-              return item;
-            }
+        set((state) => {
+          const nuevaCantidad = Math.max(
+            cantidad,
+            1,
+          );
 
-            const nuevaCantidad = Math.min(
-              Math.max(cantidad, 1),
-              item.producto.stock,
-            );
+          const items = state.items.map(
+            (item) =>
+              item.producto_id === productoId
+                ? {
+                    ...item,
+                    cantidad: nuevaCantidad,
+                  }
+                : item,
+          );
 
-            return {
-              ...item,
-              cantidad: nuevaCantidad,
-            };
-          }),
-        })),
+          return {
+            items,
+            total: calcularTotal(items),
+          };
+        }),
 
-      clearCart: () =>
+      vaciar: () =>
         set({
           items: [],
+          total: 0,
         }),
     }),
     {
-      name: "food-store-cart",
+      name: "food-store-cart-v2",
     },
   ),
 );

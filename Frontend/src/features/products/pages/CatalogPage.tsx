@@ -8,6 +8,7 @@ import { ProductoCard } from "../components/ProductoCard";
 import { useCatalog } from "../hooks/useCatalog";
 import { useCartStore } from "@/store/cartStore";
 import { useNotificationStore } from "@/shared/store/notificationStore";
+import { Skeleton } from "@/shared/components/ui/Skeleton";
 
 import type { Producto } from "../types/producto.types";
 
@@ -18,7 +19,9 @@ export const CatalogPage = () => {
   const [categoriaId, setCategoriaId] = useState<number | undefined>(undefined);
   const [page, setPage] = useState(0);
 
-  const addItem = useCartStore((state) => state.addItem);
+  const agregar = useCartStore(
+    (state) => state.agregar,
+  );
 
   const showNotification = useNotificationStore(
     (state) => state.showNotification
@@ -32,10 +35,14 @@ export const CatalogPage = () => {
     disponible: true,
   });
 
-  const handleAddToCart = (producto: Producto) => {
-    addItem(producto);
+  const handleAddToCart = (
+    producto: Producto,
+  ) => {
+    agregar(producto);
 
-    showNotification("Producto agregado al carrito");
+    showNotification(
+      "Producto agregado al carrito",
+    );
   };
 
   const handleSearchChange = (value: string) => {
@@ -166,7 +173,7 @@ export const CatalogPage = () => {
       </div>
 
       {productosQuery.isPending && (
-        <LoadingState message="Cargando productos..." />
+        <Skeleton count={6} />
       )}
 
       {productosQuery.isError && (

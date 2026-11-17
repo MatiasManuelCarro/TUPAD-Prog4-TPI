@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-query";
 
 import { useNotificationStore } from "@/shared/store/notificationStore";
-
+import { handleApiError } from "@/shared/api/handleApiError";
 import { cambiarEstadoPedido } from "../api/pedidos";
 
 import type {
@@ -45,10 +45,13 @@ export const useCambiarEstadoPedido = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       showNotification(
-        "No se pudo actualizar el estado del pedido",
+        handleApiError(
+          error,
+          "No se pudo actualizar el estado del pedido",
+        ),
       );
-    },
+    },    
   });
 };
