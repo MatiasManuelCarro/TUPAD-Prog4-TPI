@@ -3,6 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import { registerUser } from "../services/authService";
+import { handleApiError } from "@/shared/api/handleApiError";
 
 import type { RegisterData } from "../types/auth.types";
 
@@ -38,9 +39,12 @@ export const RegisterPage = () => {
         await registerUser(data);
 
         navigate("/login");
-      } catch {
+      } catch (error: unknown) {
         setErrorMessage(
-          "No se pudo completar el registro",
+          handleApiError(
+            error,
+            "No se pudo completar el registro",
+          ),
         );
       } finally {
         setIsPending(false);

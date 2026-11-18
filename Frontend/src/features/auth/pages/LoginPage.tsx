@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "react-router-dom";
+import { handleApiError } from "@/shared/api/handleApiError";
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -9,9 +10,7 @@ export const LoginPage = () => {
 
   const { login } = useAuth();
 
-  const [errorMessage, setErrorMessage] = useState<
-    string | null
-  >(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [isPending, setIsPending] = useState(false);
 
@@ -26,15 +25,12 @@ export const LoginPage = () => {
       setIsPending(true);
 
       try {
-        await login(
-          value.username.trim(),
-          value.password,
-        );
+        await login(value.username.trim(), value.password);
 
         navigate("/");
-      } catch {
+      } catch (error: unknown) {
         setErrorMessage(
-          "Usuario o contraseña incorrectos",
+          handleApiError(error, "Usuario o contraseña incorrectos")
         );
       } finally {
         setIsPending(false);
@@ -121,11 +117,7 @@ export const LoginPage = () => {
                   name={field.name}
                   type="text"
                   value={field.state.value}
-                  onChange={(event) =>
-                    field.handleChange(
-                      event.target.value,
-                    )
-                  }
+                  onChange={(event) => field.handleChange(event.target.value)}
                   autoComplete="username"
                   className="
                     w-full
@@ -151,9 +143,7 @@ export const LoginPage = () => {
             name="password"
             validators={{
               onChange: ({ value }) =>
-                value.length === 0
-                  ? "La contraseña es obligatoria"
-                  : undefined,
+                value.length === 0 ? "La contraseña es obligatoria" : undefined,
             }}
           >
             {(field) => (
@@ -175,11 +165,7 @@ export const LoginPage = () => {
                   name={field.name}
                   type="password"
                   value={field.state.value}
-                  onChange={(event) =>
-                    field.handleChange(
-                      event.target.value,
-                    )
-                  }
+                  onChange={(event) => field.handleChange(event.target.value)}
                   autoComplete="current-password"
                   className="
                     w-full
@@ -202,9 +188,7 @@ export const LoginPage = () => {
           </form.Field>
 
           {errorMessage && (
-            <p className="text-sm text-app-danger">
-              {errorMessage}
-            </p>
+            <p className="text-sm text-app-danger">{errorMessage}</p>
           )}
 
           <button
@@ -223,9 +207,7 @@ export const LoginPage = () => {
               disabled:opacity-50
             "
           >
-            {isPending
-              ? "Ingresando..."
-              : "Iniciar sesión"}
+            {isPending ? "Ingresando..." : "Iniciar sesión"}
           </button>
 
           <p className="text-center text-sm text-app-text/70">
