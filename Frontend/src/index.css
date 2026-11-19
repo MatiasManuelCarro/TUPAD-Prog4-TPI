@@ -19,6 +19,14 @@
   --color-app-cancelled: #b93a3a;
 }
 
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-app-background);
+  color: var(--color-app-text);
+}
+
 .dark {
   --color-app-background: #10191d;
   --color-app-surface: #182429;

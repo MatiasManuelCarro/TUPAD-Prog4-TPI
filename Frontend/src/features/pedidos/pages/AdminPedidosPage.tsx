@@ -1,25 +1,21 @@
 import { useState } from "react";
 
-import {
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-  type ColumnDef,
-} from "@tanstack/react-table";
-
-import { Button } from "@/shared/components/ui/Button";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { LoadingState } from "@/shared/components/ui/LoadingState";
-import { BadgeEstado } from "@/shared/components/ui/BadgeEstado";
-import { Paginacion } from "@/shared/components/Paginacion";
+
+import { PedidosTable } from "../components/PedidosTable";
 import { useCambiarEstadoPedido } from "../hooks/useCambiarEstadoPedido";
 import { usePedidos } from "../hooks/usePedidos";
 
-import type { EstadoPedido, Pedido } from "../types/pedido.types";
+import type {
+  EstadoPedido,
+  Pedido,
+} from "../types/pedido.types";
 
-const getSiguienteEstado = (estado: EstadoPedido): EstadoPedido | null => {
+const getSiguienteEstado = (
+  estado: EstadoPedido,
+): EstadoPedido | null => {
   if (estado === "PENDIENTE") {
     return "EN_PREPARACION";
   }
@@ -31,20 +27,10 @@ const getSiguienteEstado = (estado: EstadoPedido): EstadoPedido | null => {
   return null;
 };
 
-const getTextoAccion = (estado: EstadoPedido): string | null => {
-  if (estado === "PENDIENTE") {
-    return "Preparar";
-  }
-
-  if (estado === "EN_PREPARACION") {
-    return "Entregar";
-  }
-
-  return null;
-};
-
 export const AdminPedidosPage = () => {
-  const [estado, setEstado] = useState<EstadoPedido | undefined>(undefined);
+  const [estado, setEstado] = useState<
+    EstadoPedido | undefined
+  >(undefined);
 
   const pedidosQuery = usePedidos({
     skip: 0,
@@ -52,10 +38,14 @@ export const AdminPedidosPage = () => {
     estado,
   });
 
-  const cambiarEstadoMutation = useCambiarEstadoPedido();
+  const cambiarEstadoMutation =
+    useCambiarEstadoPedido();
 
-  const handleCambiarEstado = (pedido: Pedido) => {
-    const nuevoEstado = getSiguienteEstado(pedido.estado);
+  const handleCambiarEstado = (
+    pedido: Pedido,
+  ) => {
+    const nuevoEstado =
+      getSiguienteEstado(pedido.estado);
 
     if (!nuevoEstado) {
       return;
@@ -67,13 +57,18 @@ export const AdminPedidosPage = () => {
     });
   };
 
-  const handleCancelar = (pedido: Pedido) => {
-    if (pedido.estado !== "PENDIENTE" && pedido.estado !== "EN_PREPARACION") {
+  const handleCancelar = (
+    pedido: Pedido,
+  ) => {
+    if (
+      pedido.estado !== "PENDIENTE" &&
+      pedido.estado !== "EN_PREPARACION"
+    ) {
       return;
     }
 
     const confirmar = window.confirm(
-      `¿Deseas cancelar el pedido #${pedido.id}?`
+      `¿Deseas cancelar el pedido #${pedido.id}?`,
     );
 
     if (!confirmar) {
@@ -86,95 +81,6 @@ export const AdminPedidosPage = () => {
     });
   };
 
-  const columns: ColumnDef<Pedido>[] = [
-    {
-      accessorKey: "id",
-      header: "Pedido",
-      cell: ({ row }) => `#${row.original.id}`,
-    },
-    {
-      accessorKey: "usuario_id",
-      header: "Usuario",
-      cell: ({ row }) => `#${row.original.usuario_id}`,
-    },
-    {
-      accessorKey: "created_at",
-      header: "Fecha",
-      cell: ({ row }) => new Date(row.original.created_at).toLocaleString(),
-    },
-    {
-      accessorKey: "estado",
-      header: "Estado",
-      cell: ({ row }) => <BadgeEstado estado={row.original.estado} />,
-    },
-    {
-      accessorKey: "forma_pago",
-      header: "Pago",
-    },
-    {
-      accessorKey: "total",
-      header: "Total",
-      cell: ({ row }) => `$${row.original.total.toFixed(2)}`,
-    },
-    {
-      id: "acciones",
-      header: "Acciones",
-      enableSorting: false,
-
-      cell: ({ row }) => {
-        const pedido = row.original;
-
-        const textoAccion = getTextoAccion(pedido.estado);
-
-        const puedeCancelar =
-          pedido.estado === "PENDIENTE" || pedido.estado === "EN_PREPARACION";
-
-        return (
-          <div
-            className="
-              flex
-              flex-wrap
-              justify-end
-              gap-2
-            "
-          >
-            {textoAccion && (
-              <Button
-                variant="edit"
-                disabled={cambiarEstadoMutation.isPending}
-                onClick={() => handleCambiarEstado(pedido)}
-              >
-                {textoAccion}
-              </Button>
-            )}
-
-            {puedeCancelar && (
-              <Button
-                variant="danger"
-                disabled={cambiarEstadoMutation.isPending}
-                onClick={() => handleCancelar(pedido)}
-              >
-                Cancelar
-              </Button>
-            )}
-          </div>
-        );
-      },
-    },
-  ];
-
-  const table = useReactTable({
-    data: pedidosQuery.data?.items ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-  });
-
   if (pedidosQuery.isPending) {
     return (
       <main className="mx-auto max-w-6xl p-6">
@@ -186,12 +92,15 @@ export const AdminPedidosPage = () => {
   if (pedidosQuery.isError) {
     return (
       <main className="mx-auto max-w-6xl p-6">
-        <ErrorState message={pedidosQuery.error.message} />
+        <ErrorState
+          message={pedidosQuery.error.message}
+        />
       </main>
     );
   }
 
-  const sinPedidos = pedidosQuery.data.items.length === 0;
+  const pedidos = pedidosQuery.data.items;
+  const sinPedidos = pedidos.length === 0;
 
   return (
     <main
@@ -234,9 +143,14 @@ export const AdminPedidosPage = () => {
             id="estado"
             value={estado ?? ""}
             onChange={(event) => {
-              const value = event.target.value;
+              const value =
+                event.target.value;
 
-              setEstado(value === "" ? undefined : (value as EstadoPedido));
+              setEstado(
+                value === ""
+                  ? undefined
+                  : (value as EstadoPedido),
+              );
             }}
             className="
               w-full
@@ -248,15 +162,25 @@ export const AdminPedidosPage = () => {
               text-app-text
             "
           >
-            <option value="">Todos</option>
+            <option value="">
+              Todos
+            </option>
 
-            <option value="PENDIENTE">Pendiente</option>
+            <option value="PENDIENTE">
+              Pendiente
+            </option>
 
-            <option value="EN_PREPARACION">En preparación</option>
+            <option value="EN_PREPARACION">
+              En preparación
+            </option>
 
-            <option value="ENTREGADO">Entregado</option>
+            <option value="ENTREGADO">
+              Entregado
+            </option>
 
-            <option value="CANCELADO">Cancelado</option>
+            <option value="CANCELADO">
+              Cancelado
+            </option>
           </select>
         </div>
       </div>
@@ -264,107 +188,16 @@ export const AdminPedidosPage = () => {
       {sinPedidos ? (
         <EmptyState message="No hay pedidos para mostrar." />
       ) : (
-        <div
-          className="
-            overflow-hidden
-            rounded-xl
-            border
-            border-app-border
-            bg-app-surface
-            shadow-sm
-          "
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr
-                    key={headerGroup.id}
-                    className="
-                        border-b
-                        border-app-border
-                      "
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className={`
-                              px-5
-                              py-4
-                              font-semibold
-                              text-app-text
-                              ${
-                                header.column.id === "acciones"
-                                  ? "text-right"
-                                  : ""
-                              }
-                            `}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="
-                        border-b
-                        border-app-border
-                        last:border-b-0
-                      "
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className={`
-                              px-5
-                              py-4
-                              text-app-text
-                              ${
-                                cell.column.id === "acciones"
-                                  ? "text-right"
-                                  : ""
-                              }
-                            `}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div
-            className="
-            border-t
-          border-app-border
-            px-5
-            py-4
-            "
-          >
-            <Paginacion
-              paginaActual={table.getState().pagination.pageIndex + 1}
-              totalPaginas={table.getPageCount()}
-              puedeAnterior={table.getCanPreviousPage()}
-              puedeSiguiente={table.getCanNextPage()}
-              onAnterior={() => table.previousPage()}
-              onSiguiente={() => table.nextPage()}
-            />
-          </div>
-        </div>
+        <PedidosTable
+          pedidos={pedidos}
+          isPending={
+            cambiarEstadoMutation.isPending
+          }
+          onCambiarEstado={
+            handleCambiarEstado
+          }
+          onCancelar={handleCancelar}
+        />
       )}
     </main>
   );
