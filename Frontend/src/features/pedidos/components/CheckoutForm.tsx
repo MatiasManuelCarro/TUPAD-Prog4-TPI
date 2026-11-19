@@ -192,6 +192,7 @@ export const CheckoutForm = ({
                 id={field.name}
                 name={field.name}
                 value={field.state.value}
+                maxLength={200}
                 onChange={(event) =>
                   field.handleChange(
                     event.target.value,
