@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getCategorias } from "@/features/categories";
+import { getCategorias } from "@/features/categorias";
 
 import {
   getProducts,

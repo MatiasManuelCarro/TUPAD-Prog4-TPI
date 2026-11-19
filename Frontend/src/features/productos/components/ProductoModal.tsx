@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 
-import type { Categoria } from "@/features/categories";
+import type { Categoria } from "@/features/categorias";
 import { Button } from "@/shared/components/ui/Button";
 import { Modal } from "@/shared/components/ui/Modal";
 import { Input } from "@/shared/components/ui/Input";

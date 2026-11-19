@@ -4,7 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { getCategorias } from "@/features/categories";
+import { getCategorias } from "@/features/categorias";
 import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/shared/store/notificationStore";
 

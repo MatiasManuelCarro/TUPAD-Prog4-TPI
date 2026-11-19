@@ -10,7 +10,7 @@ import {
   RegisterPage,
 } from "@/features/auth";
 
-import { CategoriasPage } from "@/features/categories";
+import { CategoriasPage } from "@/features/categorias";
 
 import {
   AdminPedidosPage,
@@ -23,7 +23,7 @@ import {
 import {
   CatalogPage,
   ProductsPage,
-} from "@/features/products";
+} from "@/features/productos";
 
 import { AdminUsuariosPage } from "@/features/usuarios";
 

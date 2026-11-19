@@ -1,4 +1,4 @@
-import type { Categoria } from "@/features/categories";
+import type { Categoria } from "@/features/categorias";
 
 export type Producto = {
   id: number;

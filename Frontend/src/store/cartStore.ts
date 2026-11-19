@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { Producto } from "@/features/products";
+import type { Producto } from "@/features/productos";
 
 export type CartItem = {
   producto_id: number;

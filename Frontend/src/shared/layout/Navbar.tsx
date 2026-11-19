@@ -1,25 +1,18 @@
-import {
-  NavLink,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/features/auth";
 import { useThemeStore } from "@/shared/store/themeStore";
 
-const navLinkClass = ({
-  isActive,
-}: {
-  isActive: boolean;
-}) => `
+const navLinkClass = ({ isActive }: { isActive: boolean }) => `
   rounded-lg
   px-3
   py-2
   font-semibold
   transition
-  ${isActive
-    ? "bg-app-primary text-white"
-    : "text-app-text hover:bg-app-background"
+  ${
+    isActive
+      ? "bg-app-primary text-white"
+      : "text-app-text hover:bg-app-background"
   }
 `;
 
@@ -29,19 +22,14 @@ export const Navbar = () => {
 
   const { user, logout } = useAuth();
 
-  const darkMode = useThemeStore(
-    (state) => state.darkMode,
-  );
+  const darkMode = useThemeStore((state) => state.darkMode);
 
-  const toggleTheme = useThemeStore(
-    (state) => state.toggleTheme,
-  );
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
   const isAdmin = user?.role === "admin";
 
   const isAuthPage =
-    location.pathname === "/login" ||
-    location.pathname === "/register";
+    location.pathname === "/login" || location.pathname === "/register";
 
   const handleLogout = async () => {
     await logout();
@@ -91,64 +79,39 @@ export const Navbar = () => {
         >
           {!isAuthPage && (
             <>
-              <NavLink
-                to="/"
-                end
-                className={navLinkClass}
-              >
+              <NavLink to="/" end className={navLinkClass}>
                 Catálogo
               </NavLink>
 
-              <NavLink
-                to="/carrito"
-                className={navLinkClass}
-              >
+              <NavLink to="/carrito" className={navLinkClass}>
                 Carrito
               </NavLink>
 
               {user && (
-                <NavLink
-                  to="/mis-pedidos"
-                  className={navLinkClass}
-                >
+                <NavLink to="/mis-pedidos" className={navLinkClass}>
                   Mis pedidos
                 </NavLink>
               )}
 
               {isAdmin && (
                 <>
-                  <NavLink
-                    to="/admin/resumen"
-                    className={navLinkClass}
-                  >
+                  <NavLink to="/admin/resumen" className={navLinkClass}>
                     Resumen
                   </NavLink>
 
-                  <NavLink
-                    to="/admin/categorias"
-                    className={navLinkClass}
-                  >
+                  <NavLink to="/admin/categorias" className={navLinkClass}>
                     Categorías
                   </NavLink>
 
-                  <NavLink
-                    to="/admin/productos"
-                    className={navLinkClass}
-                  >
+                  <NavLink to="/admin/productos" className={navLinkClass}>
                     Productos
                   </NavLink>
 
-                  <NavLink
-                    to="/admin/pedidos"
-                    className={navLinkClass}
-                  >
+                  <NavLink to="/admin/pedidos" className={navLinkClass}>
                     Pedidos
                   </NavLink>
 
-                  <NavLink
-                    to="/admin/usuarios"
-                    className={navLinkClass}
-                  >
+                  <NavLink to="/admin/usuarios" className={navLinkClass}>
                     Usuarios
                   </NavLink>
                 </>
@@ -171,9 +134,7 @@ export const Navbar = () => {
               hover:bg-app-background
             "
           >
-            {darkMode
-              ? "Modo claro"
-              : "Modo oscuro"}
+            {darkMode ? "Modo claro" : "Modo oscuro"}
           </button>
 
           {!isAuthPage && (
@@ -192,9 +153,7 @@ export const Navbar = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      void handleLogout()
-                    }
+                    onClick={() => void handleLogout()}
                     className="
                       rounded-lg
                       border
@@ -211,10 +170,7 @@ export const Navbar = () => {
                   </button>
                 </>
               ) : (
-                <NavLink
-                  to="/login"
-                  className={navLinkClass}
-                >
+                <NavLink to="/login" className={navLinkClass}>
                   Iniciar sesión
                 </NavLink>
               )}
