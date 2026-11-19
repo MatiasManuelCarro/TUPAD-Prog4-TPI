@@ -3,27 +3,18 @@ import { Link } from "react-router-dom";
 import { Button } from "@/shared/components/ui/Button";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { useCartStore } from "@/store/cartStore";
+import { Card } from "@/shared/components/ui/Card";
 
 export const CarritoPage = () => {
-  const items = useCartStore(
-    (state) => state.items,
-  );
+  const items = useCartStore((state) => state.items);
 
-  const total = useCartStore(
-    (state) => state.total,
-  );
+  const total = useCartStore((state) => state.total);
 
-  const quitar = useCartStore(
-    (state) => state.quitar,
-  );
+  const quitar = useCartStore((state) => state.quitar);
 
-  const cambiarCantidad = useCartStore(
-    (state) => state.cambiarCantidad,
-  );
+  const cambiarCantidad = useCartStore((state) => state.cambiarCantidad);
 
-  const vaciar = useCartStore(
-    (state) => state.vaciar,
-  );
+  const vaciar = useCartStore((state) => state.vaciar);
 
   if (items.length === 0) {
     return (
@@ -91,35 +82,25 @@ export const CarritoPage = () => {
           </p>
         </div>
 
-        <Button
-          variant="danger"
-          onClick={vaciar}
-        >
+        <Button variant="danger" onClick={vaciar}>
           Vaciar carrito
         </Button>
       </div>
 
       <div className="space-y-4">
         {items.map((item) => {
-          const subtotal =
-            item.precio_unitario *
-            item.cantidad;
+          const subtotal = item.precio_unitario * item.cantidad;
 
           return (
-            <article
+            <Card
               key={item.producto_id}
               className="
-                flex
-                flex-col
-                gap-4
-                rounded-xl
-                border
-                border-app-border
-                bg-app-surface
-                p-4
-                shadow-sm
-                sm:flex-row
-                sm:items-center
+              flex
+              flex-col
+              gap-4
+              p-4
+              sm:flex-row
+              sm:items-center
               "
             >
               <div className="min-w-0 flex-1">
@@ -163,17 +144,13 @@ export const CarritoPage = () => {
                   min="1"
                   value={item.cantidad}
                   onChange={(event) => {
-                    const cantidad =
-                      event.target.valueAsNumber;
+                    const cantidad = event.target.valueAsNumber;
 
                     if (Number.isNaN(cantidad)) {
                       return;
                     }
 
-                    cambiarCantidad(
-                      item.producto_id,
-                      cantidad,
-                    );
+                    cambiarCantidad(item.producto_id, cantidad);
                   }}
                   className="
                     w-20
@@ -199,27 +176,20 @@ export const CarritoPage = () => {
 
                 <Button
                   variant="danger"
-                  onClick={() =>
-                    quitar(item.producto_id)
-                  }
+                  onClick={() => quitar(item.producto_id)}
                 >
                   Quitar
                 </Button>
               </div>
-            </article>
+            </Card>
           );
         })}
       </div>
 
-      <div
+      <Card
         className="
-          mt-8
-          rounded-xl
-          border
-          border-app-border
-          bg-app-surface
-          p-6
-          shadow-sm
+        mt-8
+        p-6
         "
       >
         <div
@@ -289,7 +259,7 @@ export const CarritoPage = () => {
             Finalizar compra
           </Link>
         </div>
-      </div>
+      </Card>
     </main>
   );
 };

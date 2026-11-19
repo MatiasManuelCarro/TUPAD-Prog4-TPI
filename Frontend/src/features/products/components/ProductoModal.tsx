@@ -3,6 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import type { Categoria } from "@/features/categories";
 import { Button } from "@/shared/components/ui/Button";
 import { Modal } from "@/shared/components/ui/Modal";
+import { Input } from "@/shared/components/ui/Input";
 
 import type {
   Producto,
@@ -103,7 +104,7 @@ export const ProductoModal = ({
                 Nombre
               </label>
 
-              <input
+              <Input
                 id={field.name}
                 name={field.name}
                 type="text"
@@ -113,15 +114,6 @@ export const ProductoModal = ({
                     event.target.value,
                   )
                 }
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-app-border
-                  bg-app-background
-                  p-2
-                  text-app-text
-                "
               />
 
               {!field.state.meta.isValid && (
@@ -184,7 +176,7 @@ export const ProductoModal = ({
                 Precio
               </label>
 
-              <input
+              <Input
                 id={field.name}
                 name={field.name}
                 type="number"
@@ -201,15 +193,6 @@ export const ProductoModal = ({
                       : value,
                   );
                 }}
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-app-border
-                  bg-app-background
-                  p-2
-                  text-app-text
-                "
               />
 
               {!field.state.meta.isValid && (
@@ -231,7 +214,7 @@ export const ProductoModal = ({
                 URL de imagen
               </label>
 
-              <input
+              <Input
                 id={field.name}
                 name={field.name}
                 type="url"
@@ -241,15 +224,7 @@ export const ProductoModal = ({
                     event.target.value,
                   )
                 }
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-app-border
-                  bg-app-background
-                  p-2
-                  text-app-text
-                "
+
               />
             </div>
           )}
@@ -273,7 +248,7 @@ export const ProductoModal = ({
                 Stock
               </label>
 
-              <input
+              <Input
                 id={field.name}
                 name={field.name}
                 type="number"
@@ -290,15 +265,6 @@ export const ProductoModal = ({
                       : value,
                   );
                 }}
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-app-border
-                  bg-app-background
-                  p-2
-                  text-app-text
-                "
               />
 
               {!field.state.meta.isValid && (

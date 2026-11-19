@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { Input } from "@/shared/components/ui/Input";
 
 import type {
   Categoria,
@@ -92,7 +93,7 @@ export const CategoriaModal = ({
                 Nombre
               </label>
 
-              <input
+              <Input
                 id={field.name}
                 name={field.name}
                 type="text"
@@ -103,15 +104,6 @@ export const CategoriaModal = ({
                   )
                 }
                 maxLength={100}
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-app-border
-                  bg-app-background
-                  p-2
-                  text-app-text
-                "
               />
 
               {!field.state.meta.isValid && (

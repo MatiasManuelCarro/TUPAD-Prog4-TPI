@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "react-router-dom";
 import { handleApiError } from "@/shared/api/handleApiError";
-
+import { Input } from "@/shared/components/ui/Input";
 import { useAuth } from "../hooks/useAuth";
 
 export const LoginPage = () => {
@@ -112,22 +112,13 @@ export const LoginPage = () => {
                   Usuario
                 </label>
 
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   type="text"
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
                   autoComplete="username"
-                  className="
-                    w-full
-                    rounded-lg
-                    border
-                    border-app-border
-                    bg-app-background
-                    p-2
-                    text-app-text
-                  "
                 />
 
                 {!field.state.meta.isValid && (
@@ -160,22 +151,13 @@ export const LoginPage = () => {
                   Contraseña
                 </label>
 
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   type="password"
                   value={field.state.value}
                   onChange={(event) => field.handleChange(event.target.value)}
                   autoComplete="current-password"
-                  className="
-                    w-full
-                    rounded-lg
-                    border
-                    border-app-border
-                    bg-app-background
-                    p-2
-                    text-app-text
-                  "
                 />
 
                 {!field.state.meta.isValid && (

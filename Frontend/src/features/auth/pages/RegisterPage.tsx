@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { registerUser } from "../services/authService";
 import { handleApiError } from "@/shared/api/handleApiError";
+import { Input } from "@/shared/components/ui/Input";
 
 import type { RegisterData } from "../types/auth.types";
 
@@ -126,7 +127,7 @@ export const RegisterPage = () => {
                   Usuario
                 </label>
 
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   type="text"
@@ -137,15 +138,6 @@ export const RegisterPage = () => {
                     )
                   }
                   autoComplete="username"
-                  className="
-                    w-full
-                    rounded-lg
-                    border
-                    border-app-border
-                    bg-app-background
-                    p-2
-                    text-app-text
-                  "
                 />
 
                 {!field.state.meta.isValid && (
@@ -180,7 +172,7 @@ export const RegisterPage = () => {
                   Nombre completo
                 </label>
 
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   type="text"
@@ -191,15 +183,6 @@ export const RegisterPage = () => {
                     )
                   }
                   autoComplete="name"
-                  className="
-                    w-full
-                    rounded-lg
-                    border
-                    border-app-border
-                    bg-app-background
-                    p-2
-                    text-app-text
-                  "
                 />
 
                 {!field.state.meta.isValid && (
@@ -234,7 +217,7 @@ export const RegisterPage = () => {
                   Email
                 </label>
 
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   type="email"
@@ -245,15 +228,6 @@ export const RegisterPage = () => {
                     )
                   }
                   autoComplete="email"
-                  className="
-                    w-full
-                    rounded-lg
-                    border
-                    border-app-border
-                    bg-app-background
-                    p-2
-                    text-app-text
-                  "
                 />
 
                 {!field.state.meta.isValid && (
@@ -288,7 +262,7 @@ export const RegisterPage = () => {
                   Contraseña
                 </label>
 
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   type="password"
@@ -299,15 +273,6 @@ export const RegisterPage = () => {
                     )
                   }
                   autoComplete="new-password"
-                  className="
-                    w-full
-                    rounded-lg
-                    border
-                    border-app-border
-                    bg-app-background
-                    p-2
-                    text-app-text
-                  "
                 />
 
                 {!field.state.meta.isValid && (

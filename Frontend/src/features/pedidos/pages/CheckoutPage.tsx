@@ -8,13 +8,14 @@ import { handleApiError } from "@/shared/api/handleApiError";
 import { Button } from "@/shared/components/ui/Button";
 import { useNotificationStore } from "@/shared/store/notificationStore";
 import { useCartStore } from "@/store/cartStore";
-
+import { Input } from "@/shared/components/ui/Input";
 import { useCrearPedido } from "../hooks/useCrearPedido";
 
 import type {
   FormaPago,
   PedidoCreate,
 } from "../types/pedido.types";
+import { Card } from "@/shared/components/ui/Card";
 
 export const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -121,16 +122,12 @@ export const CheckoutPage = () => {
         </p>
       </div>
 
+    <Card>
       <form
-        className="
-          space-y-6
-          rounded-xl
-          border
-          border-app-border
-          bg-app-surface
-          p-6
-          shadow-sm
-        "
+      className="
+      space-y-6
+      p-6
+      "
         onSubmit={(event) => {
           event.preventDefault();
 
@@ -219,7 +216,7 @@ export const CheckoutPage = () => {
                 Dirección de entrega
               </label>
 
-              <input
+              <Input
                 id={field.name}
                 name={field.name}
                 type="text"
@@ -230,15 +227,6 @@ export const CheckoutPage = () => {
                     event.target.value,
                   )
                 }
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-app-border
-                  bg-app-background
-                  p-2
-                  text-app-text
-                "
               />
 
               {!field.state.meta.isValid && (
@@ -360,6 +348,7 @@ export const CheckoutPage = () => {
           </Button>
         </div>
       </form>
+      </Card>
     </main>
   );
 };

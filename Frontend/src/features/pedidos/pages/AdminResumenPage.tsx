@@ -1,42 +1,8 @@
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { LoadingState } from "@/shared/components/ui/LoadingState";
-import { Card } from "@/shared/components/ui/Card";
 import { useResumenPedidos } from "../hooks/useResumenPedidos";
+import { ResumenCard } from "../components/ResumenCard";
 
-type ResumenCardProps = {
-  titulo: string;
-  valor: string | number;
-};
-
-const ResumenCard = ({
-  titulo,
-  valor,
-}: ResumenCardProps) => {
-  return (
-    <Card className="p-6">
-      <p
-        className="
-          text-sm
-          font-medium
-          text-app-text/70
-        "
-      >
-        {titulo}
-      </p>
-
-      <p
-        className="
-          mt-2
-          text-3xl
-          font-bold
-          text-app-primary
-        "
-      >
-        {valor}
-      </p>
-    </Card>
-  );
-};
 
 export const AdminResumenPage = () => {
   const resumenQuery = useResumenPedidos();

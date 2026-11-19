@@ -1,8 +1,11 @@
 # Food Store
 
-Trabajo Práctico Integrador de **Programación 4** de la Tecnicatura Universitaria en Programación a Distancia.
+## Realizado por Matias Manuel Carro 
+
+Trabajo Práctico Integrador de **Programación 4** de la **Tecnicatura Universitaria en Programación a Distancia.**
 
 Food Store es una aplicación web para la gestión de pedidos de un negocio de comidas. Permite a los clientes registrarse, consultar el catálogo, gestionar un carrito, realizar pedidos y consultar su estado. También dispone de un panel de administración para gestionar categorías, productos, stock, pedidos y usuarios.
+
 
 ## Tecnologías utilizadas
 
@@ -176,10 +179,10 @@ El seed es idempotente y carga:
 ```text
 Usuario: admin
 Contraseña: Admin1234!
-Rol: admin
 ```
 
-Estas credenciales corresponden exclusivamente al entorno académico y de desarrollo del proyecto.
+Estas credenciales son solo para prueba durante el desarrollo del proyecto.
+
 
 ## 8. Ejecutar el backend
 
@@ -453,22 +456,21 @@ Se excluyen:
 .venv/
 node_modules/
 __pycache__/
-*.pyc
+.pyc
 ```
 
-Los archivos de ejem*lo que sí deben conservarse son:
+Los archivos de ejemplo que sí deben conservarse son:
 
 ```text
 Backend/.env.example
-Frontend.env.example
+Frontend/.env.example
 ```
 
 ---
 
 # Autor
 
-Ma**as Carro
+Matias Manuel Carro
 
-Tecnicatura Universitari* en Programación a Distancia  
-Pro*ramación 4
-````*
+Tecnicatura Universitaria en Programación a Distancia  
+Programación 4

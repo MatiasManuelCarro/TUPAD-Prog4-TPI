@@ -9,6 +9,7 @@ import { useCatalog } from "../hooks/useCatalog";
 import { useCartStore } from "@/store/cartStore";
 import { useNotificationStore } from "@/shared/store/notificationStore";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
+import { Input } from "@/shared/components/ui/Input";
 
 import type { Producto } from "../types/producto.types";
 
@@ -116,21 +117,12 @@ export const CatalogPage = () => {
             Buscar
           </label>
 
-          <input
+          <Input
             id="search"
             type="search"
             value={search}
             placeholder="Buscar productos..."
             onChange={(event) => handleSearchChange(event.target.value)}
-            className="
-              w-full
-              rounded-lg
-              border
-              border-app-border
-              bg-app-background
-              p-2
-              text-app-text
-            "
           />
         </div>
 
