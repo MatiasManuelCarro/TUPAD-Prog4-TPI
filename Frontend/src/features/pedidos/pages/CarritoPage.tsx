@@ -142,6 +142,7 @@ export const CarritoPage = () => {
                   id={`cantidad-${item.producto_id}`}
                   type="number"
                   min="1"
+                  max={item.stock}
                   value={item.cantidad}
                   onChange={(event) => {
                     const cantidad = event.target.valueAsNumber;

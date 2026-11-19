@@ -7,6 +7,7 @@ export type CartItem = {
   producto_id: number;
   nombre: string;
   precio_unitario: number;
+  stock: number;
   cantidad: number;
 };
 
@@ -55,7 +56,10 @@ export const useCartStore = create<CartState>()(
                 item.producto_id === producto.id
                   ? {
                       ...item,
-                      cantidad: item.cantidad + 1,
+                      cantidad: Math.min(
+                        item.cantidad + 1,
+                        item.stock,
+                      ),
                     }
                   : item,
               )
@@ -66,6 +70,7 @@ export const useCartStore = create<CartState>()(
                   nombre: producto.nombre,
                   precio_unitario:
                     producto.precio_base,
+                  stock: producto.stock,
                   cantidad: 1,
                 },
               ];
@@ -89,31 +94,29 @@ export const useCartStore = create<CartState>()(
           };
         }),
 
-      cambiarCantidad: (
-        productoId,
-        cantidad,
-      ) =>
-        set((state) => {
-          const nuevaCantidad = Math.max(
-            cantidad,
-            1,
-          );
-
-          const items = state.items.map(
-            (item) =>
-              item.producto_id === productoId
-                ? {
-                    ...item,
-                    cantidad: nuevaCantidad,
-                  }
-                : item,
-          );
-
-          return {
-            items,
-            total: calcularTotal(items),
-          };
-        }),
+        cambiarCantidad: (
+          productoId,
+          cantidad,
+        ) =>
+          set((state) => {
+            const items = state.items.map(
+              (item) =>
+                item.producto_id === productoId
+                  ? {
+                      ...item,
+                      cantidad: Math.min(
+                        Math.max(cantidad, 1),
+                        item.stock,
+                      ),
+                    }
+                  : item,
+            );
+        
+            return {
+              items,
+              total: calcularTotal(items),
+            };
+          }),
 
       vaciar: () =>
         set({
