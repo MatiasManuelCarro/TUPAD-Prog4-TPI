@@ -12,20 +12,14 @@ def seed() -> None:
         # =====================================================
         # ADMIN
         # =====================================================
-        admin = session.exec(
-            select(Usuario).where(
-                Usuario.username == "admin"
-            )
-        ).first()
+        admin = session.exec(select(Usuario).where(Usuario.username == "admin")).first()
 
         if admin is None:
             admin = Usuario(
                 username="admin",
                 full_name="Administrador",
                 email="admin@foodstore.com",
-                hashed_password=hash_password(
-                    "Admin1234!"
-                ),
+                hashed_password=hash_password("Admin1234!"),
                 role="admin",
                 disabled=False,
             )
@@ -58,9 +52,7 @@ def seed() -> None:
 
         for datos in categorias_iniciales:
             categoria = session.exec(
-                select(Categoria).where(
-                    Categoria.nombre == datos["nombre"]
-                )
+                select(Categoria).where(Categoria.nombre == datos["nombre"])
             ).first()
 
             if categoria is None:
@@ -83,7 +75,7 @@ def seed() -> None:
                 "nombre": "Hamburguesa Clásica",
                 "descripcion": "Hamburguesa clásica con queso",
                 "precio_base": 8500.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/20525708/pexels-photo-20525708.jpeg",
                 "stock": 20,
                 "disponible": True,
                 "categoria": "Hamburguesas",
@@ -92,7 +84,7 @@ def seed() -> None:
                 "nombre": "Hamburguesa Doble",
                 "descripcion": "Hamburguesa doble con queso",
                 "precio_base": 10500.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/37296924/pexels-photo-37296924.jpeg",
                 "stock": 15,
                 "disponible": True,
                 "categoria": "Hamburguesas",
@@ -101,7 +93,7 @@ def seed() -> None:
                 "nombre": "Pizza Muzzarella",
                 "descripcion": "Pizza de muzzarella",
                 "precio_base": 12000.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/37690810/pexels-photo-37690810.jpeg",
                 "stock": 15,
                 "disponible": True,
                 "categoria": "Pizzas",
@@ -110,7 +102,7 @@ def seed() -> None:
                 "nombre": "Pizza Napolitana",
                 "descripcion": "Pizza con tomate y ajo",
                 "precio_base": 13500.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/31596394/pexels-photo-31596394.jpeg",
                 "stock": 12,
                 "disponible": True,
                 "categoria": "Pizzas",
@@ -119,7 +111,7 @@ def seed() -> None:
                 "nombre": "Empanada de Carne",
                 "descripcion": "Empanada de carne",
                 "precio_base": 2500.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/37327430/pexels-photo-37327430.jpeg",
                 "stock": 30,
                 "disponible": True,
                 "categoria": "Empanadas",
@@ -128,7 +120,7 @@ def seed() -> None:
                 "nombre": "Empanada de Jamón y Queso",
                 "descripcion": "Empanada de jamón y queso",
                 "precio_base": 2500.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/36905236/pexels-photo-36905236.jpeg",
                 "stock": 30,
                 "disponible": True,
                 "categoria": "Empanadas",
@@ -137,7 +129,7 @@ def seed() -> None:
                 "nombre": "Gaseosa",
                 "descripcion": "Gaseosa individual",
                 "precio_base": 3000.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/12936159/pexels-photo-12936159.jpeg",
                 "stock": 25,
                 "disponible": True,
                 "categoria": "Bebidas",
@@ -146,7 +138,7 @@ def seed() -> None:
                 "nombre": "Agua Mineral",
                 "descripcion": "Agua mineral individual",
                 "precio_base": 2000.0,
-                "imagen_url": None,
+                "imagen_url": "https://images.pexels.com/photos/7765745/pexels-photo-7765745.jpeg",
                 "stock": 25,
                 "disponible": True,
                 "categoria": "Bebidas",
@@ -155,17 +147,13 @@ def seed() -> None:
 
         for datos in productos_iniciales:
             producto = session.exec(
-                select(Producto).where(
-                    Producto.nombre == datos["nombre"]
-                )
+                select(Producto).where(Producto.nombre == datos["nombre"])
             ).first()
 
             if producto is not None:
                 continue
 
-            categoria = categorias[
-                datos["categoria"]
-            ]
+            categoria = categorias[datos["categoria"]]
 
             producto = Producto(
                 categoria_id=categoria.id,
@@ -182,9 +170,7 @@ def seed() -> None:
 
         session.commit()
 
-    print(
-        "Datos iniciales de Food Store cargados correctamente."
-    )
+    print("Datos iniciales de Food Store cargados correctamente.")
 
 
 if __name__ == "__main__":
