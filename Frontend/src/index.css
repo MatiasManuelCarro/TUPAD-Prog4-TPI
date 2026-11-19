@@ -12,6 +12,11 @@
   --color-app-danger: #b93a3a;
 
   --color-app-border: #d3e5f0;
+
+  --color-app-pending: #a66700;
+  --color-app-preparing: #2563a6;
+  --color-app-delivered: #287a4b;
+  --color-app-cancelled: #b93a3a;
 }
 
 .dark {
@@ -24,4 +29,9 @@
   --color-app-danger: #e16b6b;
 
   --color-app-border: #30454d;
+
+  --color-app-pending: #f2b84b;
+  --color-app-preparing: #6fa8dc;
+  --color-app-delivered: #65b985;
+  --color-app-cancelled: #e16b6b;
 }

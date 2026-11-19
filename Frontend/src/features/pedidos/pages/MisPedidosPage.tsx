@@ -7,20 +7,17 @@ import { LoadingState } from "@/shared/components/ui/LoadingState";
 
 import { useCancelarPedido } from "../hooks/useCancelarPedido";
 import { usePedidos } from "../hooks/usePedidos";
-
-import type {
-  EstadoPedido,
-} from "../types/pedido.types";
+import { Paginacion } from "@/shared/components/Paginacion";
+import { Card } from "@/shared/components/ui/Card";
+import type { EstadoPedido } from "../types/pedido.types";
+import { BadgeEstado } from "@/shared/components/ui/BadgeEstado";
 
 const PAGE_SIZE = 10;
 
 export const MisPedidosPage = () => {
   const [page, setPage] = useState(0);
 
-  const [estado, setEstado] =
-    useState<EstadoPedido | undefined>(
-      undefined,
-    );
+  const [estado, setEstado] = useState<EstadoPedido | undefined>(undefined);
 
   const pedidosQuery = usePedidos({
     skip: page * PAGE_SIZE,
@@ -28,27 +25,16 @@ export const MisPedidosPage = () => {
     estado,
   });
 
-  const cancelarMutation =
-    useCancelarPedido();
+  const cancelarMutation = useCancelarPedido();
 
-  const handleEstadoChange = (
-    value: string,
-  ) => {
-    setEstado(
-      value === ""
-        ? undefined
-        : (value as EstadoPedido),
-    );
+  const handleEstadoChange = (value: string) => {
+    setEstado(value === "" ? undefined : (value as EstadoPedido));
 
     setPage(0);
   };
 
-  const handleCancelar = (
-    pedidoId: number,
-  ) => {
-    const confirmar = window.confirm(
-      "¿Deseas cancelar este pedido?",
-    );
+  const handleCancelar = (pedidoId: number) => {
+    const confirmar = window.confirm("¿Deseas cancelar este pedido?");
 
     if (!confirmar) {
       return;
@@ -68,9 +54,7 @@ export const MisPedidosPage = () => {
   if (pedidosQuery.isError) {
     return (
       <main className="mx-auto max-w-6xl p-6">
-        <ErrorState
-          message={pedidosQuery.error.message}
-        />
+        <ErrorState message={pedidosQuery.error.message} />
       </main>
     );
   }
@@ -78,9 +62,7 @@ export const MisPedidosPage = () => {
   const pedidos = pedidosQuery.data.items;
   const total = pedidosQuery.data.total;
 
-  const totalPages = Math.ceil(
-    total / PAGE_SIZE,
-  );
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <main
@@ -134,11 +116,7 @@ export const MisPedidosPage = () => {
           <select
             id="estado"
             value={estado ?? ""}
-            onChange={(event) =>
-              handleEstadoChange(
-                event.target.value,
-              )
-            }
+            onChange={(event) => handleEstadoChange(event.target.value)}
             className="
               rounded-lg
               border
@@ -148,25 +126,15 @@ export const MisPedidosPage = () => {
               text-app-text
             "
           >
-            <option value="">
-              Todos
-            </option>
+            <option value="">Todos</option>
 
-            <option value="PENDIENTE">
-              Pendiente
-            </option>
+            <option value="PENDIENTE">Pendiente</option>
 
-            <option value="EN_PREPARACION">
-              En preparación
-            </option>
+            <option value="EN_PREPARACION">En preparación</option>
 
-            <option value="ENTREGADO">
-              Entregado
-            </option>
+            <option value="ENTREGADO">Entregado</option>
 
-            <option value="CANCELADO">
-              Cancelado
-            </option>
+            <option value="CANCELADO">Cancelado</option>
           </select>
         </div>
       </div>
@@ -176,16 +144,9 @@ export const MisPedidosPage = () => {
       ) : (
         <div className="space-y-5">
           {pedidos.map((pedido) => (
-            <article
+            <Card
               key={pedido.id}
-              className="
-                overflow-hidden
-                rounded-xl
-                border
-                border-app-border
-                bg-app-surface
-                shadow-sm
-              "
+              className="overflow-hidden"
             >
               <div
                 className="
@@ -211,9 +172,7 @@ export const MisPedidosPage = () => {
                   </h2>
 
                   <p className="text-sm text-app-text/70">
-                    {new Date(
-                      pedido.created_at,
-                    ).toLocaleString()}
+                    {new Date(pedido.created_at).toLocaleString()}
                   </p>
                 </div>
 
@@ -225,33 +184,13 @@ export const MisPedidosPage = () => {
                     gap-3
                   "
                 >
-                  <span
-                    className="
-                      rounded-full
-                      border
-                      border-app-border
-                      px-3
-                      py-1
-                      text-sm
-                      font-semibold
-                      text-app-text
-                    "
-                  >
-                    {pedido.estado}
-                  </span>
+                  <BadgeEstado estado={pedido.estado} />
 
-                  {pedido.estado ===
-                    "PENDIENTE" && (
+                  {pedido.estado === "PENDIENTE" && (
                     <Button
                       variant="danger"
-                      onClick={() =>
-                        handleCancelar(
-                          pedido.id,
-                        )
-                      }
-                      disabled={
-                        cancelarMutation.isPending
-                      }
+                      onClick={() => handleCancelar(pedido.id)}
+                      disabled={cancelarMutation.isPending}
                     >
                       Cancelar
                     </Button>
@@ -283,16 +222,11 @@ export const MisPedidosPage = () => {
                             text-app-text
                           "
                         >
-                          {
-                            item.nombre_producto
-                          }
+                          {item.nombre_producto}
                         </p>
 
                         <p className="text-sm text-app-text/70">
-                          {item.cantidad} × $
-                          {item.precio_unitario.toFixed(
-                            2,
-                          )}
+                          {item.cantidad} × ${item.precio_unitario.toFixed(2)}
                         </p>
                       </div>
 
@@ -302,10 +236,7 @@ export const MisPedidosPage = () => {
                           text-app-text
                         "
                       >
-                        $
-                        {item.subtotal.toFixed(
-                          2,
-                        )}
+                        ${item.subtotal.toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -325,27 +256,16 @@ export const MisPedidosPage = () => {
                   "
                 >
                   <p>
-                    <strong>
-                      Forma de pago:
-                    </strong>{" "}
-                    {pedido.forma_pago}
+                    <strong>Forma de pago:</strong> {pedido.forma_pago}
                   </p>
 
                   <p>
-                    <strong>
-                      Dirección:
-                    </strong>{" "}
-                    {
-                      pedido.direccion_entrega
-                    }
+                    <strong>Dirección:</strong> {pedido.direccion_entrega}
                   </p>
 
                   {pedido.notas && (
                     <p className="sm:col-span-2">
-                      <strong>
-                        Notas:
-                      </strong>{" "}
-                      {pedido.notas}
+                      <strong>Notas:</strong> {pedido.notas}
                     </p>
                   )}
                 </div>
@@ -367,60 +287,25 @@ export const MisPedidosPage = () => {
                       text-app-primary
                     "
                   >
-                    Total: $
-                    {pedido.total.toFixed(2)}
+                    Total: ${pedido.total.toFixed(2)}
                   </span>
                 </div>
               </div>
-            </article>
+            </Card>
           ))}
         </div>
       )}
 
       {totalPages > 1 && (
-        <div
-          className="
-            mt-8
-            flex
-            items-center
-            justify-center
-            gap-4
-          "
-        >
-          <Button
-            variant="secondary"
-            onClick={() =>
-              setPage((current) =>
-                Math.max(
-                  current - 1,
-                  0,
-                ),
-              )
-            }
-            disabled={page === 0}
-          >
-            Anterior
-          </Button>
-
-          <span className="text-sm text-app-text/70">
-            Página {page + 1} de{" "}
-            {totalPages}
-          </span>
-
-          <Button
-            variant="secondary"
-            onClick={() =>
-              setPage(
-                (current) =>
-                  current + 1,
-              )
-            }
-            disabled={
-              page + 1 >= totalPages
-            }
-          >
-            Siguiente
-          </Button>
+        <div className="mt-8">
+          <Paginacion
+            paginaActual={page + 1}
+            totalPaginas={totalPages}
+            puedeAnterior={page > 0}
+            puedeSiguiente={page + 1 < totalPages}
+            onAnterior={() => setPage((current) => Math.max(current - 1, 0))}
+            onSiguiente={() => setPage((current) => current + 1)}
+          />
         </div>
       )}
     </main>

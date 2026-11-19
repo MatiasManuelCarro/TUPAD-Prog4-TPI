@@ -1,4 +1,5 @@
 import type { Producto } from "../types/producto.types";
+import { Card } from "@/shared/components/ui/Card";
 
 type ProductoCardProps = {
   producto: Producto;
@@ -13,18 +14,13 @@ export const ProductoCard = ({
     producto.disponible && producto.stock > 0;
 
   return (
-    <article
+    <Card
       className="
-        flex
-        h-full
-        flex-col
-        overflow-hidden
-        rounded-xl
-        border
-        border-app-border
-        bg-app-surface
-        shadow-sm
-      "
+    flex
+    h-full
+    flex-col
+    overflow-hidden
+  "
     >
       <div
         className="
@@ -145,6 +141,6 @@ export const ProductoCard = ({
           </button>
         </div>
       </div>
-    </article>
+    </Card>
   );
 };

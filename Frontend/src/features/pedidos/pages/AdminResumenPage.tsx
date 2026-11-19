@@ -1,6 +1,6 @@
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { LoadingState } from "@/shared/components/ui/LoadingState";
-
+import { Card } from "@/shared/components/ui/Card";
 import { useResumenPedidos } from "../hooks/useResumenPedidos";
 
 type ResumenCardProps = {
@@ -13,16 +13,7 @@ const ResumenCard = ({
   valor,
 }: ResumenCardProps) => {
   return (
-    <article
-      className="
-        rounded-xl
-        border
-        border-app-border
-        bg-app-surface
-        p-6
-        shadow-sm
-      "
-    >
+    <Card className="p-6">
       <p
         className="
           text-sm
@@ -43,7 +34,7 @@ const ResumenCard = ({
       >
         {valor}
       </p>
-    </article>
+    </Card>
   );
 };
 

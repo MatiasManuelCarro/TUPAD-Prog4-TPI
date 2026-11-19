@@ -12,18 +12,14 @@ import { Button } from "@/shared/components/ui/Button";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { LoadingState } from "@/shared/components/ui/LoadingState";
-
+import { BadgeEstado } from "@/shared/components/ui/BadgeEstado";
+import { Paginacion } from "@/shared/components/Paginacion";
 import { useCambiarEstadoPedido } from "../hooks/useCambiarEstadoPedido";
 import { usePedidos } from "../hooks/usePedidos";
 
-import type {
-  EstadoPedido,
-  Pedido,
-} from "../types/pedido.types";
+import type { EstadoPedido, Pedido } from "../types/pedido.types";
 
-const getSiguienteEstado = (
-  estado: EstadoPedido,
-): EstadoPedido | null => {
+const getSiguienteEstado = (estado: EstadoPedido): EstadoPedido | null => {
   if (estado === "PENDIENTE") {
     return "EN_PREPARACION";
   }
@@ -35,9 +31,7 @@ const getSiguienteEstado = (
   return null;
 };
 
-const getTextoAccion = (
-  estado: EstadoPedido,
-): string | null => {
+const getTextoAccion = (estado: EstadoPedido): string | null => {
   if (estado === "PENDIENTE") {
     return "Preparar";
   }
@@ -50,10 +44,7 @@ const getTextoAccion = (
 };
 
 export const AdminPedidosPage = () => {
-  const [estado, setEstado] =
-    useState<EstadoPedido | undefined>(
-      undefined,
-    );
+  const [estado, setEstado] = useState<EstadoPedido | undefined>(undefined);
 
   const pedidosQuery = usePedidos({
     skip: 0,
@@ -61,14 +52,10 @@ export const AdminPedidosPage = () => {
     estado,
   });
 
-  const cambiarEstadoMutation =
-    useCambiarEstadoPedido();
+  const cambiarEstadoMutation = useCambiarEstadoPedido();
 
-  const handleCambiarEstado = (
-    pedido: Pedido,
-  ) => {
-    const nuevoEstado =
-      getSiguienteEstado(pedido.estado);
+  const handleCambiarEstado = (pedido: Pedido) => {
+    const nuevoEstado = getSiguienteEstado(pedido.estado);
 
     if (!nuevoEstado) {
       return;
@@ -80,18 +67,13 @@ export const AdminPedidosPage = () => {
     });
   };
 
-  const handleCancelar = (
-    pedido: Pedido,
-  ) => {
-    if (
-      pedido.estado !== "PENDIENTE" &&
-      pedido.estado !== "EN_PREPARACION"
-    ) {
+  const handleCancelar = (pedido: Pedido) => {
+    if (pedido.estado !== "PENDIENTE" && pedido.estado !== "EN_PREPARACION") {
       return;
     }
 
     const confirmar = window.confirm(
-      `¿Deseas cancelar el pedido #${pedido.id}?`,
+      `¿Deseas cancelar el pedido #${pedido.id}?`
     );
 
     if (!confirmar) {
@@ -108,26 +90,22 @@ export const AdminPedidosPage = () => {
     {
       accessorKey: "id",
       header: "Pedido",
-      cell: ({ row }) =>
-        `#${row.original.id}`,
+      cell: ({ row }) => `#${row.original.id}`,
     },
     {
       accessorKey: "usuario_id",
       header: "Usuario",
-      cell: ({ row }) =>
-        `#${row.original.usuario_id}`,
+      cell: ({ row }) => `#${row.original.usuario_id}`,
     },
     {
       accessorKey: "created_at",
       header: "Fecha",
-      cell: ({ row }) =>
-        new Date(
-          row.original.created_at,
-        ).toLocaleString(),
+      cell: ({ row }) => new Date(row.original.created_at).toLocaleString(),
     },
     {
       accessorKey: "estado",
       header: "Estado",
+      cell: ({ row }) => <BadgeEstado estado={row.original.estado} />,
     },
     {
       accessorKey: "forma_pago",
@@ -136,8 +114,7 @@ export const AdminPedidosPage = () => {
     {
       accessorKey: "total",
       header: "Total",
-      cell: ({ row }) =>
-        `$${row.original.total.toFixed(2)}`,
+      cell: ({ row }) => `$${row.original.total.toFixed(2)}`,
     },
     {
       id: "acciones",
@@ -147,12 +124,10 @@ export const AdminPedidosPage = () => {
       cell: ({ row }) => {
         const pedido = row.original;
 
-        const textoAccion =
-          getTextoAccion(pedido.estado);
+        const textoAccion = getTextoAccion(pedido.estado);
 
         const puedeCancelar =
-          pedido.estado === "PENDIENTE" ||
-          pedido.estado === "EN_PREPARACION";
+          pedido.estado === "PENDIENTE" || pedido.estado === "EN_PREPARACION";
 
         return (
           <div
@@ -166,12 +141,8 @@ export const AdminPedidosPage = () => {
             {textoAccion && (
               <Button
                 variant="edit"
-                disabled={
-                  cambiarEstadoMutation.isPending
-                }
-                onClick={() =>
-                  handleCambiarEstado(pedido)
-                }
+                disabled={cambiarEstadoMutation.isPending}
+                onClick={() => handleCambiarEstado(pedido)}
               >
                 {textoAccion}
               </Button>
@@ -180,12 +151,8 @@ export const AdminPedidosPage = () => {
             {puedeCancelar && (
               <Button
                 variant="danger"
-                disabled={
-                  cambiarEstadoMutation.isPending
-                }
-                onClick={() =>
-                  handleCancelar(pedido)
-                }
+                disabled={cambiarEstadoMutation.isPending}
+                onClick={() => handleCancelar(pedido)}
               >
                 Cancelar
               </Button>
@@ -200,8 +167,7 @@ export const AdminPedidosPage = () => {
     data: pedidosQuery.data?.items ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel:
-      getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
         pageSize: 10,
@@ -220,15 +186,12 @@ export const AdminPedidosPage = () => {
   if (pedidosQuery.isError) {
     return (
       <main className="mx-auto max-w-6xl p-6">
-        <ErrorState
-          message={pedidosQuery.error.message}
-        />
+        <ErrorState message={pedidosQuery.error.message} />
       </main>
     );
   }
 
-  const sinPedidos =
-    pedidosQuery.data.items.length === 0;
+  const sinPedidos = pedidosQuery.data.items.length === 0;
 
   return (
     <main
@@ -271,14 +234,9 @@ export const AdminPedidosPage = () => {
             id="estado"
             value={estado ?? ""}
             onChange={(event) => {
-              const value =
-                event.target.value;
+              const value = event.target.value;
 
-              setEstado(
-                value === ""
-                  ? undefined
-                  : (value as EstadoPedido),
-              );
+              setEstado(value === "" ? undefined : (value as EstadoPedido));
             }}
             className="
               w-full
@@ -290,25 +248,15 @@ export const AdminPedidosPage = () => {
               text-app-text
             "
           >
-            <option value="">
-              Todos
-            </option>
+            <option value="">Todos</option>
 
-            <option value="PENDIENTE">
-              Pendiente
-            </option>
+            <option value="PENDIENTE">Pendiente</option>
 
-            <option value="EN_PREPARACION">
-              En preparación
-            </option>
+            <option value="EN_PREPARACION">En preparación</option>
 
-            <option value="ENTREGADO">
-              Entregado
-            </option>
+            <option value="ENTREGADO">Entregado</option>
 
-            <option value="CANCELADO">
-              Cancelado
-            </option>
+            <option value="CANCELADO">Cancelado</option>
           </select>
         </div>
       </div>
@@ -329,134 +277,92 @@ export const AdminPedidosPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                {table
-                  .getHeaderGroups()
-                  .map((headerGroup) => (
-                    <tr
-                      key={headerGroup.id}
-                      className="
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr
+                    key={headerGroup.id}
+                    className="
                         border-b
                         border-app-border
                       "
-                    >
-                      {headerGroup.headers.map(
-                        (header) => (
-                          <th
-                            key={header.id}
-                            className={`
+                  >
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className={`
                               px-5
                               py-4
                               font-semibold
                               text-app-text
                               ${
-                                header.column.id ===
-                                "acciones"
+                                header.column.id === "acciones"
                                   ? "text-right"
                                   : ""
                               }
                             `}
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column
-                                    .columnDef
-                                    .header,
-                                  header.getContext(),
-                                )}
-                          </th>
-                        ),
-                      )}
-                    </tr>
-                  ))}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
               </thead>
 
               <tbody>
-                {table
-                  .getRowModel()
-                  .rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="
+                {table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="
                         border-b
                         border-app-border
                         last:border-b-0
                       "
-                    >
-                      {row
-                        .getVisibleCells()
-                        .map((cell) => (
-                          <td
-                            key={cell.id}
-                            className={`
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        className={`
                               px-5
                               py-4
                               text-app-text
                               ${
-                                cell.column.id ===
-                                "acciones"
+                                cell.column.id === "acciones"
                                   ? "text-right"
                                   : ""
                               }
                             `}
-                          >
-                            {flexRender(
-                              cell.column
-                                .columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
-                        ))}
-                    </tr>
-                  ))}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-
           <div
             className="
-              flex
-              items-center
-              justify-between
-              gap-4
-              border-t
-              border-app-border
-              px-5
-              py-4
+            border-t
+          border-app-border
+            px-5
+            py-4
             "
           >
-            <span className="text-sm text-app-text/70">
-              Página{" "}
-              {table.getState().pagination
-                .pageIndex + 1}{" "}
-              de {table.getPageCount()}
-            </span>
-
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  table.previousPage()
-                }
-                disabled={
-                  !table.getCanPreviousPage()
-                }
-              >
-                Anterior
-              </Button>
-
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  table.nextPage()
-                }
-                disabled={
-                  !table.getCanNextPage()
-                }
-              >
-                Siguiente
-              </Button>
-            </div>
+            <Paginacion
+              paginaActual={table.getState().pagination.pageIndex + 1}
+              totalPaginas={table.getPageCount()}
+              puedeAnterior={table.getCanPreviousPage()}
+              puedeSiguiente={table.getCanNextPage()}
+              onAnterior={() => table.previousPage()}
+              onSiguiente={() => table.nextPage()}
+            />
           </div>
         </div>
       )}

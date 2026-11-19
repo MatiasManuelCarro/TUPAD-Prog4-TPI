@@ -13,6 +13,7 @@ import {
 import type { Categoria } from "../types/categoria.types";
 import { Button } from "@/shared/components/ui/Button";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
+import { Paginacion } from "@/shared/components/Paginacion";
 
 type CategoriaListProps = {
   categorias: Categoria[];
@@ -169,39 +170,24 @@ export const CategoriaList = ({
 
       <div
         className="
-          flex
-          items-center
-          justify-between
-          gap-4
-          border-t
-          border-app-border
-          px-5
-          py-4
-        "
+    border-t
+    border-app-border
+    px-5
+    py-4
+  "
       >
-        <span className="text-sm text-app-text/70">
-          Página {table.getState().pagination.pageIndex + 1} de{" "}
-          {table.getPageCount()}
-        </span>
-
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
-        </div>
+        <Paginacion
+          paginaActual={
+            table.getState().pagination.pageIndex + 1
+          }
+          totalPaginas={table.getPageCount()}
+          puedeAnterior={table.getCanPreviousPage()}
+          puedeSiguiente={table.getCanNextPage()}
+          onAnterior={() => table.previousPage()}
+          onSiguiente={() => table.nextPage()}
+        />
       </div>
+
     </div>
   );
 };

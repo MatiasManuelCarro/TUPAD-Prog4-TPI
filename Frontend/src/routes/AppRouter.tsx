@@ -27,7 +27,7 @@ import {
 
 import { AdminUsuariosPage } from "@/features/usuarios";
 
-import { Navbar } from "@/shared/components/Navbar";
+import { MainLayout } from "@/shared/layout/MainLayout";
 import { Toast } from "@/shared/components/Toast";
 import { UnauthorizedPage } from "@/shared/components/UnauthorizedPage";
 
@@ -36,7 +36,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 export const AppRouter = () => {
   return (
     <BrowserRouter>
-      <Navbar />
+      <MainLayout>
 
       <Routes>
         <Route
@@ -119,8 +119,9 @@ export const AppRouter = () => {
           }
         />
       </Routes>
-
+      </MainLayout>
       <Toast />
+
     </BrowserRouter>
   );
 };

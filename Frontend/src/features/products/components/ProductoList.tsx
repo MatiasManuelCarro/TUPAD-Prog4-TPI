@@ -12,6 +12,7 @@ import {
 
 import { Button } from "@/shared/components/ui/Button";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
+import { Paginacion } from "@/shared/components/Paginacion";
 
 import type { Producto } from "../types/producto.types";
 
@@ -71,42 +72,42 @@ export const ProductoList = ({
     },
     ...(esAdmin
       ? [
-          {
-            id: "acciones",
-            header: "Acciones",
-            enableSorting: false,
-            cell: ({ row }) => (
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="edit"
-                  onClick={() =>
-                    onEdit(row.original)
-                  }
-                >
-                  Editar
-                </Button>
+        {
+          id: "acciones",
+          header: "Acciones",
+          enableSorting: false,
+          cell: ({ row }) => (
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="edit"
+                onClick={() =>
+                  onEdit(row.original)
+                }
+              >
+                Editar
+              </Button>
 
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    onStock(row.original)
-                  }
-                >
-                  Stock
-                </Button>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  onStock(row.original)
+                }
+              >
+                Stock
+              </Button>
 
-                <Button
-                  variant="danger"
-                  onClick={() =>
-                    onDelete(row.original.id)
-                  }
-                >
-                  Eliminar
-                </Button>
-              </div>
-            ),
-          } satisfies ColumnDef<Producto>,
-        ]
+              <Button
+                variant="danger"
+                onClick={() =>
+                  onDelete(row.original.id)
+                }
+              >
+                Eliminar
+              </Button>
+            </div>
+          ),
+        } satisfies ColumnDef<Producto>,
+      ]
       : []),
   ];
 
@@ -166,11 +167,10 @@ export const ProductoList = ({
                           py-4
                           font-semibold
                           text-app-text
-                          ${
-                            header.column.id ===
+                          ${header.column.id ===
                             "acciones"
-                              ? "text-right"
-                              : ""
+                            ? "text-right"
+                            : ""
                           }
                         `}
                       >
@@ -232,11 +232,10 @@ export const ProductoList = ({
                           px-5
                           py-4
                           text-app-text
-                          ${
-                            cell.column.id ===
+                          ${cell.column.id ===
                             "acciones"
-                              ? "text-right"
-                              : ""
+                            ? "text-right"
+                            : ""
                           }
                         `}
                       >
@@ -254,43 +253,24 @@ export const ProductoList = ({
 
       <div
         className="
-          flex
-          items-center
-          justify-between
-          gap-4
-          border-t
-          border-app-border
-          px-5
-          py-4
-        "
+    border-t
+    border-app-border
+    px-5
+    py-4
+  "
       >
-        <span className="text-sm text-app-text/70">
-          Página{" "}
-          {table.getState().pagination.pageIndex +
-            1}{" "}
-          de {table.getPageCount()}
-        </span>
-
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => table.previousPage()}
-            disabled={
-              !table.getCanPreviousPage()
-            }
-          >
-            Anterior
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
-        </div>
+        <Paginacion
+          paginaActual={
+            table.getState().pagination.pageIndex + 1
+          }
+          totalPaginas={table.getPageCount()}
+          puedeAnterior={table.getCanPreviousPage()}
+          puedeSiguiente={table.getCanNextPage()}
+          onAnterior={() => table.previousPage()}
+          onSiguiente={() => table.nextPage()}
+        />
       </div>
+
     </div>
   );
 };
