@@ -1,6 +1,6 @@
 # Food Store - Frontend
 
-Frontend del Trabajo Práctico Integrador **Food Store**, desarrollado con React y TypeScript.
+Frontend del Trabajo Práctico Integrador **Food Store**,  desarrollado por **Matias Manuel Carro** con React y TypeScript.
 
 La aplicación incluye el flujo de cliente y el panel de administración, consumiendo la API REST del backend mediante Axios.
 

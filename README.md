@@ -1,6 +1,6 @@
 # Food Store
 
-## Realizado por Matias Manuel Carro 
+## Realizado por Matias Manuel Carro
 
 Trabajo Práctico Integrador de **Programación 4** de la **Tecnicatura Universitaria en Programación a Distancia.**
 
@@ -20,14 +20,13 @@ https://github.com/MatiasManuelCarro/TUPAD-Prog4-TPI
 
 # Video de demostración
 
-Video de demostración:
+Link al video:
 
 ```text
-
+https://www.youtube.com/watch?v=I7iApgFBPF4
 ```
 
 ---
-
 
 ## Tecnologías utilizadas
 
@@ -205,7 +204,6 @@ Contraseña: Admin1234!
 ```
 
 Estas credenciales son solo para prueba durante el desarrollo del proyecto.
-
 
 ## 8. Ejecutar el backend
 
@@ -445,30 +443,6 @@ GET /api/v1/health/db
 ```
 
 El primero comprueba que la aplicación está disponible y el segundo comprueba la conexión con la base de datos.
-
----
-
-
-# Entrega
-
-El archivo ZIP de entrega no debe incluir archivos generados ni configuraciones locales.
-
-Se excluyen:
-
-```text
-.env
-.venv/
-node_modules/
-__pycache__/
-.pyc
-```
-
-Los archivos de ejemplo que sí deben conservarse son:
-
-```text
-Backend/.env.example
-Frontend/.env.example
-```
 
 ---
 

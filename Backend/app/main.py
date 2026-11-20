@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Los modelos Categoria, Producto, Usuario, Pedido y DetallePedido estan
 # para registrar todas las tablas y relaciones en SQLModel.metadata
 # antes de ejecutar create_all_tables().
-# Aunque el editor los marque como no utilizados, estos imports son intencionales.
+# El editor los marque como no utilizados pero estos imports son intencionales.
 from app.core.config import settings
 from app.core.database import create_all_tables
 from app.modules.auth.router import router as auth_router
