@@ -6,6 +6,28 @@ Trabajo Práctico Integrador de **Programación 4** de la **Tecnicatura Universi
 
 Food Store es una aplicación web para la gestión de pedidos de un negocio de comidas. Permite a los clientes registrarse, consultar el catálogo, gestionar un carrito, realizar pedidos y consultar su estado. También dispone de un panel de administración para gestionar categorías, productos, stock, pedidos y usuarios.
 
+---
+
+# Repositorio
+
+Repositorio público:
+
+```text
+https://github.com/MatiasManuelCarro/TUPAD-Prog4-TPI
+```
+
+---
+
+# Video de demostración
+
+Video de demostración:
+
+```text
+
+```
+
+---
+
 
 ## Tecnologías utilizadas
 
@@ -162,6 +184,7 @@ Ctrl + C
 
 ## 7. Cargar los datos iniciales
 
+Desde la raiz de backend y con el entorno virtual activado.
 Ejecutar:
 
 ```powershell
@@ -425,25 +448,6 @@ El primero comprueba que la aplicación está disponible y el segundo comprueba 
 
 ---
 
-# Repositorio
-
-Repositorio público:
-
-```text
-PEGAR_AQUI_URL_DEL_REPOSITORIO
-```
-
----
-
-# Video de demostración
-
-Video de demostración:
-
-```text
-PEGAR_AQUI_URL_DEL_VIDEO
-```
-
----
 
 # Entrega
 
